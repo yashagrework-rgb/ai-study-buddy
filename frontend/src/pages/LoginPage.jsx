@@ -29,11 +29,11 @@ export default function LoginPage({ onLogin }) {
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.message || 
-        err.response?.data?.error || 
-        'Login failed. Please check your credentials and try again.'
-      );
+      const msg = err.response?.data?.message || 
+                  (typeof err.response?.data?.error === 'object' ? err.response?.data?.error?.message : err.response?.data?.error) || 
+                  err.message || 
+                  'Login failed. Please check your credentials and try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

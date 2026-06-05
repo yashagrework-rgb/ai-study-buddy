@@ -33,11 +33,11 @@ export default function RegisterPage() {
       }, 2000);
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.message || 
-        err.response?.data?.error || 
-        'Registration failed. Please fill all fields and try again.'
-      );
+      const msg = err.response?.data?.message || 
+                  (typeof err.response?.data?.error === 'object' ? err.response?.data?.error?.message : err.response?.data?.error) || 
+                  err.message || 
+                  'Registration failed. Please fill all fields and try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

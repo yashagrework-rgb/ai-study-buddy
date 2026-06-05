@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Toggle this flag to run the app completely standalone inside the browser (localStorage)
 // Set to false to connect to the Spring Boot backend server on port 8080.
-const USE_LOCAL_MOCK = false;
+const USE_LOCAL_MOCK = true;
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
