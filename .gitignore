@@ -1,0 +1,37 @@
+# Help files and IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.DS_Store
+
+# Build folders
+target/
+backend/target/
+frontend/dist/
+frontend/node_modules/
+node_modules/
+
+# Local databases & logs
+data/
+*.log
+backend/data/
+
+# Environment configurations containing secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local*
+
+# Output files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
