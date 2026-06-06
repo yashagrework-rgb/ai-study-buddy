@@ -85,7 +85,7 @@ export default function QuizPage() {
       setQuestions(parsedQuestions);
     } catch (err) {
       console.error(err);
-      setError('Failed to generate quiz. Please ensure your study guide contains adequate text.');
+      setError(err.response?.data?.message || err.message || 'Failed to generate quiz. Please ensure your study guide contains adequate text.');
     } finally {
       setLoading(false);
     }

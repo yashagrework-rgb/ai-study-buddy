@@ -64,6 +64,10 @@ public class QuizService {
             questionsJson = geminiService.generateQuiz(contentSource, count, keyToUse);
         }
 
+        if (questionsJson == null || questionsJson.startsWith("AI Buddy Error") || questionsJson.startsWith("ChatGPT Error") || questionsJson.startsWith("Error")) {
+            throw new RuntimeException(questionsJson != null ? questionsJson : "Failed to generate questions");
+        }
+
         // Save generated quiz
         Quiz quiz = Quiz.builder()
                 .title(quizTitle)
