@@ -128,7 +128,21 @@ export default function ChatPage() {
     } catch (err) {
       console.error(err);
       const errMsg = err.response?.data?.error?.message || err.message || 'Invalid API key or network error';
-      setApiKeyError(`Error: ${errMsg}`);
+      
+      if (errMsg.includes('429') || errMsg.includes('quota') || errMsg.includes('Quota') || errMsg.includes('limit')) {
+        setApiKeySuccess('API Key saved (Key is propagating, please wait a few minutes before use).');
+        setApiKeyError('');
+        localStorage.setItem('gemini_api_key', tempApiKey);
+        localStorage.setItem('gemini_model', 'models/gemini-2.0-flash-lite');
+        setSavedApiKey(tempApiKey);
+        try {
+          await api.put('/api/ai/api-key', { apiKey: tempApiKey });
+        } catch (dbErr) {
+          console.error('Failed to sync API key to database:', dbErr);
+        }
+      } else {
+        setApiKeyError(`Error: ${errMsg}`);
+      }
     } finally {
       setTestingKey(false);
     }
