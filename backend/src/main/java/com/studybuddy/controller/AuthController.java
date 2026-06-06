@@ -56,17 +56,21 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
-        // Seed default notes if the user currently has none
-        userRepository.findById(userDetails.getId()).ifPresent(user -> {
+        User user = userRepository.findById(userDetails.getId()).orElse(null);
+        if (user != null) {
+            // Seed default notes if the user currently has none
             noteSeederService.seedIfEmpty(user);
-        });
+        }
+
+        String userApiKey = (user != null) ? user.getGeminiApiKey() : null;
 
         return ResponseEntity.ok(new JwtResponse(
                 jwt,
                 userDetails.getId(),
                 userDetails.getName(),
                 userDetails.getEmail(),
-                role
+                role,
+                userApiKey
         ));
     }
 

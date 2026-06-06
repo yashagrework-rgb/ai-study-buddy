@@ -54,11 +54,13 @@ public class AiController {
             context = chatRequest.getContent();
         }
 
+        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : currentUser.getGeminiApiKey();
+
         String reply;
         if (!context.isEmpty()) {
-            reply = geminiService.askAboutNote(context, chatRequest.getMessage(), customApiKey);
+            reply = geminiService.askAboutNote(context, chatRequest.getMessage(), keyToUse);
         } else {
-            reply = geminiService.generateContent(chatRequest.getMessage(), customApiKey);
+            reply = geminiService.generateContent(chatRequest.getMessage(), keyToUse);
         }
 
         return ResponseEntity.ok(new ChatResponse(reply));
@@ -85,7 +87,9 @@ public class AiController {
             return ResponseEntity.badRequest().body(new ChatResponse("Error: No content available to summarize"));
         }
 
-        String summary = geminiService.generateSummary(contentToSummarize, customApiKey);
+        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : currentUser.getGeminiApiKey();
+
+        String summary = geminiService.generateSummary(contentToSummarize, keyToUse);
         return ResponseEntity.ok(new ChatResponse(summary));
     }
 
@@ -111,7 +115,18 @@ public class AiController {
         }
 
         int days = studyPlanRequest.getDurationDays() != null ? studyPlanRequest.getDurationDays() : 7;
-        String studyPlan = geminiService.generateStudyPlan(contentSource, days, customApiKey);
+        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : currentUser.getGeminiApiKey();
+
+        String studyPlan = geminiService.generateStudyPlan(contentSource, days, keyToUse);
         return ResponseEntity.ok(new ChatResponse(studyPlan));
+    }
+
+    @PutMapping("/api-key")
+    public ResponseEntity<?> updateApiKey(@RequestBody java.util.Map<String, String> payload) {
+        User currentUser = getCurrentUser();
+        String apiKey = payload.get("apiKey");
+        currentUser.setGeminiApiKey(apiKey);
+        userRepository.save(currentUser);
+        return ResponseEntity.ok(new MessageResponse("API Key updated successfully"));
     }
 }

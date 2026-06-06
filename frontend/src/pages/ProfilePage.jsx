@@ -21,7 +21,7 @@ export default function ProfilePage({ user }) {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSaveKey = () => {
+  const handleSaveKey = async () => {
     if (!apiKey.trim()) {
       setErrorMsg('Please enter a valid API key.');
       return;
@@ -30,14 +30,24 @@ export default function ProfilePage({ user }) {
     setSavedKey(apiKey.trim());
     setSuccessMsg('Gemini API key saved successfully!');
     setErrorMsg('');
+    try {
+      await api.put('/api/ai/api-key', { apiKey: apiKey.trim() });
+    } catch (dbErr) {
+      console.error('Failed to sync API key to database:', dbErr);
+    }
   };
 
-  const handleClearKey = () => {
+  const handleClearKey = async () => {
     localStorage.removeItem('gemini_api_key');
     setApiKey('');
     setSavedKey('');
     setSuccessMsg('Gemini API key cleared.');
     setErrorMsg('');
+    try {
+      await api.put('/api/ai/api-key', { apiKey: null });
+    } catch (dbErr) {
+      console.error('Failed to clear API key in database:', dbErr);
+    }
   };
 
   useEffect(() => {

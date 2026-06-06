@@ -117,6 +117,11 @@ export default function ChatPage() {
         localStorage.setItem('gemini_api_key', tempApiKey);
         localStorage.setItem('gemini_model', selectedModel);
         setSavedApiKey(tempApiKey);
+        try {
+          await api.put('/api/ai/api-key', { apiKey: tempApiKey });
+        } catch (dbErr) {
+          console.error('Failed to sync API key to database:', dbErr);
+        }
       } else {
         throw new Error(`All available models failed validation. Last error: ${lastTestError}`);
       }
@@ -129,13 +134,18 @@ export default function ChatPage() {
     }
   };
 
-  const handleClearKey = () => {
+  const handleClearKey = async () => {
     localStorage.removeItem('gemini_api_key');
     localStorage.removeItem('gemini_model');
     setSavedApiKey('');
     setTempApiKey('');
     setApiKeySuccess('API Key cleared successfully.');
     setApiKeyError('');
+    try {
+      await api.put('/api/ai/api-key', { apiKey: null });
+    } catch (dbErr) {
+      console.error('Failed to clear API key in database:', dbErr);
+    }
   };
 
   const chatEndRef = useRef(null);

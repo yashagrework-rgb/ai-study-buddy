@@ -24,6 +24,9 @@ public class User {
     @Column(nullable = false)
     private String role; // e.g., "ROLE_USER", "ROLE_ADMIN"
 
+    @Column(name = "gemini_api_key")
+    private String geminiApiKey;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -31,12 +34,13 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(Long id, String name, String email, String password, String role, LocalDateTime createdAt) {
+    public User(Long id, String name, String email, String password, String role, String geminiApiKey, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.geminiApiKey = geminiApiKey;
         this.createdAt = createdAt;
     }
 
@@ -51,6 +55,7 @@ public class User {
         private String email;
         private String password;
         private String role;
+        private String geminiApiKey;
         private LocalDateTime createdAt;
 
         public UserBuilder id(Long id) { this.id = id; return this; }
@@ -58,10 +63,11 @@ public class User {
         public UserBuilder email(String email) { this.email = email; return this; }
         public UserBuilder password(String password) { this.password = password; return this; }
         public UserBuilder role(String role) { this.role = role; return this; }
+        public UserBuilder geminiApiKey(String geminiApiKey) { this.geminiApiKey = geminiApiKey; return this; }
         public UserBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
 
         public User build() {
-            return new User(id, name, email, password, role, createdAt);
+            return new User(id, name, email, password, role, geminiApiKey, createdAt);
         }
     }
 
@@ -76,6 +82,8 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public String getGeminiApiKey() { return geminiApiKey; }
+    public void setGeminiApiKey(String geminiApiKey) { this.geminiApiKey = geminiApiKey; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
