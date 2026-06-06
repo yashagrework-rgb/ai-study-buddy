@@ -56,6 +56,11 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
+        // Seed default notes if the user currently has none
+        userRepository.findById(userDetails.getId()).ifPresent(user -> {
+            noteSeederService.seedIfEmpty(user);
+        });
+
         return ResponseEntity.ok(new JwtResponse(
                 jwt,
                 userDetails.getId(),

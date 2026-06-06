@@ -84,4 +84,14 @@ public class NoteSeederService {
         
         logger.info("Successfully completed seeding notes for user: {}", user.getEmail());
     }
+
+    /**
+     * Seeds notes for the given user if they currently have no notes.
+     */
+    public void seedIfEmpty(User user) {
+        if (noteRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).isEmpty()) {
+            logger.info("User {} has 0 notes, seeding default study guides...", user.getEmail());
+            seedNotesForUser(user);
+        }
+    }
 }
