@@ -126,51 +126,46 @@ public class OpenAiService {
     }
 
     private String getMockResponse(String prompt) {
+        String noteContent = "";
+        if (prompt.contains("Notes Content:\n")) {
+            noteContent = prompt.substring(prompt.indexOf("Notes Content:\n") + 15);
+        } else if (prompt.contains("Notes Context:\n")) {
+            noteContent = prompt.substring(prompt.indexOf("Notes Context:\n") + 15);
+            if (noteContent.contains("User's Question:\n")) {
+                noteContent = noteContent.substring(0, noteContent.indexOf("User's Question:\n"));
+            }
+        } else if (prompt.contains("Topic/Notes Content:\n")) {
+            noteContent = prompt.substring(prompt.indexOf("Topic/Notes Content:\n") + 21);
+        }
+        
         if (prompt.contains("JSON array")) {
-            return "[\n" +
-                    "  {\n" +
-                    "    \"question\": \"What is the capital of France?\",\n" +
-                    "    \"options\": [\"London\", \"Berlin\", \"Paris\", \"Madrid\"],\n" +
-                    "    \"answer\": \"Paris\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which programming language is commonly used for Spring Boot?\",\n" +
-                    "    \"options\": [\"Python\", \"Java\", \"C++\", \"JavaScript\"],\n" +
-                    "    \"answer\": \"Java\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"What does JWT stand for?\",\n" +
-                    "    \"options\": [\"Java Web Token\", \"JSON Web Token\", \"Joint Web Tech\", \"JPA Web Transaction\"],\n" +
-                    "    \"answer\": \"JSON Web Token\"\n" +
-                    "  }\n" +
-                    "]";
+            int count = 5;
+            if (prompt.contains("exactly ")) {
+                try {
+                    String sub = prompt.substring(prompt.indexOf("exactly ") + 8);
+                    sub = sub.substring(0, sub.indexOf(" "));
+                    count = Integer.parseInt(sub.trim());
+                } catch (Exception e) {}
+            }
+            return LocalAiFallback.getMockQuestionsForSubject(noteContent, count);
         } else if (prompt.contains("Summarize")) {
-            return "### Note Summary (ChatGPT Offline)\n\n" +
-                    "* **Introduction:** This is a placeholder summary since the OpenAI API key was not supplied or active.\n" +
-                    "* **Core Concepts:**\n" +
-                    "  1. *Backend Services:* Built with Java Spring Boot.\n" +
-                    "  2. *Security:* Configured with stateless JWT tokens.\n" +
-                    "  3. *AI Integration:* OpenAI GPT models.\n" +
-                    "* **Key Takeaway:** Configure `OPENAI_API_KEY` in environment variables or settings to enable live summaries!";
+            return LocalAiFallback.generateLocalSummary(noteContent);
         } else if (prompt.contains("study plan")) {
-            return "### 7-Day Study Plan (ChatGPT Offline)\n\n" +
-                    "* **Day 1: Setup & Initialization**\n" +
-                    "  * Focus on Spring Boot backend models and frontend boilerplate.\n" +
-                    "* **Day 2: Authentication flow**\n" +
-                    "  * Connect register/login endpoints to frontend forms.\n" +
-                    "* **Day 3: Database & Notes CRUD**\n" +
-                    "  * Verify PostgreSQL tables and write the file uploading system.\n" +
-                    "* **Day 4: AI & Quiz Generation**\n" +
-                    "  * Connect backend REST controllers with the OpenAI Service.\n" +
-                    "* **Day 5: Progress Charts**\n" +
-                    "  * Build charts to display scores and study times on Dashboard.\n" +
-                    "* **Day 6: Complete End-to-End Testing**\n" +
-                    "  * Run through quiz, note CRUD, and security filters.\n" +
-                    "* **Day 7: Deployment Ready**\n" +
-                    "  * Deploy frontend to Vercel and backend to Render.";
+            int days = 7;
+            if (prompt.contains("-day daily")) {
+                try {
+                    String sub = prompt.substring(prompt.indexOf("detailed ") + 9);
+                    sub = sub.substring(0, sub.indexOf("-day"));
+                    days = Integer.parseInt(sub.trim());
+                } catch (Exception e) {}
+            }
+            return LocalAiFallback.generateLocalStudyPlan(noteContent, days);
         } else {
-            return "Hello from AI Study Buddy! I am currently running in offline mock mode. " +
-                    "Please configure a valid `OPENAI_API_KEY` to chat live about your note contents.";
+            String question = prompt;
+            if (prompt.contains("User's Question:\n")) {
+                question = prompt.substring(prompt.indexOf("User's Question:\n") + 17);
+            }
+            return LocalAiFallback.generateLocalChatReply(noteContent, question);
         }
     }
 }
