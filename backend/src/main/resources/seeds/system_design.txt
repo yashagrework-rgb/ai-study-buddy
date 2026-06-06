@@ -1,0 +1,53 @@
+System Design & Scalability
+========================================
+
+1. VERTICAL VS HORIZONTAL SCALING
+----------------------------------------
+- Vertical Scaling (Scaling Up): Adding more power (CPU, RAM, SSD) to an existing server. Simple but has hardware limits and introduces a single point of failure (SPOF).
+- Horizontal Scaling (Scaling Out): Adding more servers to the network resource pool. Offers high availability and fault tolerance, but increases network overhead and requires load balancing.
+
+2. LOAD BALANCERS
+----------------------------------------
+Distributes incoming network traffic across a group of backend servers.
+- OSI Layers: Layer 4 (Transport layer - TCP/UDP routing) or Layer 7 (Application layer - content-based routing: URLs, HTTP headers, cookies).
+- Algorithms: Round Robin, Weighted Round Robin, Least Connections, IP Hashing (ensures sticky sessions).
+
+3. CACHING STRATEGIES
+----------------------------------------
+A cache is a high-speed, temporary storage layer.
+- Levels: Client-side (browser), CDN (geographically distributed content delivery), Reverse Proxy (Nginx), Database Cache (Redis, Memcached).
+- Caching Patterns:
+  * Cache-Aside (Lazy Loading): App checks cache. On miss, reads from DB, writes to cache, returns.
+  * Write-Through: App writes to cache, cache writes to DB immediately. High consistency but slower writes.
+  * Write-Back (Write-Behind): App writes to cache, which asynchronously writes to DB. Fast writes but risk of data loss on cache crash.
+- Eviction Policies: LRU (Least Recently Used), LFU (Least Frequently Used), FIFO.
+
+4. DATABASE SCALING & PARTITIONING
+----------------------------------------
+- Read Replicas (Leader-Follower): One Master handles writes; multiple Slaves handle reads. Async replication can lead to eventual consistency.
+- Database Sharding (Horizontal Partitioning): Splitting rows of a table across multiple database servers.
+  * Sharding Key: Column determining which shard stores the row. Choosing a bad key leads to Hotspots.
+- Consistent Hashing: Hash ring mechanism used in distributed caching and sharding to minimize data migration when nodes are added or removed.
+
+5. SYSTEM ARCHITECTURE PATTERNS
+----------------------------------------
+- Monolithic: Single unified code base. Easy to develop and test initially, but hard to scale and maintain as the team grows.
+- Microservices: Splitting app into independent, loosely coupled services communicating via APIs (REST, gRPC) or message brokers (Kafka, RabbitMQ).
+- Event-Driven Architecture: Services communicate asynchronously via events. Decoupled and highly scalable.
+
+6. API DESIGN & PROTOCOLS
+----------------------------------------
+- REST: Uses HTTP methods (GET, POST, PUT, DELETE), stateless, resource-oriented (URI). Uses JSON/XML.
+- GraphQL: Single endpoint query language. Clients specify exact fields needed, preventing over-fetching/under-fetching.
+- gRPC: High-performance, open-source RPC framework. Uses HTTP/2 and Protocol Buffers (binary serialization). Highly efficient for microservices.
+- WebSockets: Persistent, full-duplex TCP communication channel. Used for real-time applications (chat, notifications).
+
+7. KEY METRICS AND SYSTEM CAPACITY ESTIMATION
+----------------------------------------
+- Latency: Time taken to process a single request.
+- Throughput: Number of requests processed per second (QPS).
+- High Availability: Measured in "nines" (e.g., 99.99% availability).
+- Estimation rules of thumb:
+  * 1 Million daily active users: ~12 requests per second average.
+  * Read/Write ratios (read-heavy vs write-heavy).
+  * Storage calculations (Data size per request * QPS * retention days).

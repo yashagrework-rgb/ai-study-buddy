@@ -1,0 +1,50 @@
+Computer Networks & OSI Model
+========================================
+
+1. NETWORK TOPOLOGIES AND ARCHITECTURES
+----------------------------------------
+A computer network is a set of connected computers sharing resources.
+- Topologies: Star (central hub/switch), Mesh (fully connected, redundant), Ring, Bus.
+- Client-Server vs. Peer-to-Peer (P2P).
+
+2. OSI REFERENCE MODEL
+----------------------------------------
+A conceptual framework that standardizes network communication into seven layers.
+- Layer 7: Application: Human-computer interaction (HTTP, FTP, SMTP, DNS).
+- Layer 6: Presentation: Data formatting, encryption, compression (SSL/TLS, JPEG, ASCII).
+- Layer 5: Session: Manages dialogues and connections (NetBIOS, RPC).
+- Layer 4: Transport: End-to-end data transmission, flow control, error checking (TCP, UDP). Unit: Segments.
+- Layer 3: Network: Determines physical paths; logical routing and addressing (IPv4, IPv6, ICMP, IPsec). Unit: Packets.
+- Layer 2: Data Link: Node-to-node data transfer; physical addressing (MAC addresses, Ethernet, PPP). Unit: Frames.
+- Layer 1: Physical: Electrical, mechanical, and optical transmission of raw bits (cables, hubs, modulation). Unit: Bits.
+
+3. TCP/IP MODEL AND KEY PROTOCOLS
+----------------------------------------
+A four-layer practical protocol suite: Application, Transport, Internet, Network Access.
+- Transport Layer:
+  * TCP (Transmission Control Protocol): Connection-oriented, reliable, guarantees packet order.
+    - Three-Way Handshake: SYN -> SYN-ACK -> ACK.
+    - Flow Control: Uses Sliding Window.
+    - Congestion Control: Slow Start, Congestion Avoidance, Fast Retransmit.
+  * UDP (User Datagram Protocol): Connectionless, unreliable, fast. Used for streaming, DNS, VoIP.
+- Internet Layer:
+  * IP Addressing:
+    - IPv4: 32-bit address (e.g., 192.168.1.1). Subnetting divides network and host portions using a mask.
+    - IPv6: 128-bit hexadecimal address. Solves IPv4 exhaustion.
+- Application Layer:
+  * DNS (Domain Name System): Resolves human-readable domain names (google.com) to IP addresses. Runs over UDP port 53.
+  * HTTP/HTTPS: Hypertext transfer protocols. HTTPS encrypts traffic using SSL/TLS.
+
+4. DATA LINK LAYER MECHANISMS
+----------------------------------------
+- Framing: Packaging network layer packets into frames.
+- Error Control: Cyclic Redundancy Check (CRC) computes checksums to verify frame integrity.
+- Flow Control: Prevents receiver overflow (Stop-and-Wait, Sliding Window).
+- MAC Protocols: CSMA/CD (Carrier Sense Multiple Access with Collision Detection - used in wired Ethernet) and CSMA/CA (with Collision Avoidance - used in wireless Wi-Fi).
+
+5. ROUTING ALGORITHMS
+----------------------------------------
+Routers use algorithms to forward packets along optimal paths.
+- Distance Vector Routing: Nodes share routing tables with neighbors (Bellman-Ford algorithm, e.g., RIP).
+- Link State Routing: Nodes construct full network maps using Dijkstra's algorithm (e.g., OSPF).
+- Border Gateway Protocol (BGP): Path-vector protocol routing traffic between Autonomous Systems (AS) across the Internet.

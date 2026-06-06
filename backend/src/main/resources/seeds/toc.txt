@@ -1,0 +1,71 @@
+Theory of Computation & Automata
+========================================
+
+1. LANGUAGES, GRAMMARS, AND COMPUTATION
+----------------------------------------
+Theory of Computation studies what can be computed and the efficiency of algorithms.
+- Alphabet (Σ): Finite set of symbols.
+- String: Finite sequence of symbols from an alphabet.
+- Language: A set of strings selected from Σ*.
+
+2. FINITE AUTOMATA (FA)
+----------------------------------------
+Simplest model of computation. Recognizes regular languages. Has no external memory.
+- Deterministic Finite Automata (DFA):
+  * For every state and input symbol, there is exactly one transition to a next state.
+  * Formal description (5-tuple): M = (Q, Σ, δ, q0, F).
+    - Q: Finite set of states.
+    - Σ: Alphabet.
+    - δ: Transition function (Q ✕ Σ -> Q).
+    - q0: Start state.
+    - F: Set of accepting states.
+- Non-Deterministic Finite Automata (NFA):
+  * Can have multiple transitions for a state and input symbol, or ε-transitions (moves without input).
+  * δ transition: Q ✕ Σ -> 2^Q (power set of states).
+  * Equivalence: Every NFA can be converted to an equivalent DFA using Subset Construction, though state size can grow exponentially.
+- Minimization of DFA: Reducing the number of states using equivalence classes (Myhill-Nerode theorem).
+
+3. REGULAR EXPRESSIONS & LANGUAGES
+----------------------------------------
+- Regular Expression (RE): Formal algebraic representation of regular languages. Built using union (+), concatenation (.), and Kleene star (*).
+- Pumping Lemma for Regular Languages:
+  * Used to prove a language is NOT regular.
+  * Statement: If L is regular, there exists a pumping length 'p' such that any string s ∈ L with length >= p can be split into s = xyz satisfying:
+    1. |y| > 0
+    2. |xy| <= p
+    3. x (y^i) z ∈ L for all i >= 0.
+
+4. CONTEXT-FREE GRAMMARS (CFG) AND PUSH DOWNAUTOMATA (PDA)
+----------------------------------------
+- Context-Free Grammar (CFG):
+  * Formal definition: G = (V, Σ, R, S).
+    - V: Variables / Non-terminals.
+    - Σ: Terminals.
+    - R: Rules of form A -> α, where A ∈ V and α ∈ (V ∪ Σ)*.
+    - S: Start variable.
+  * Ambiguity: A grammar is ambiguous if it generates more than one derivation tree for a string.
+- Pushdown Automata (PDA):
+  * Models Context-Free Languages (CFL).
+  * Equivalent to an FA with an external stack (LIFO memory).
+  * Formal δ transition: Q ✕ (Σ ∪ {ε}) ✕ (Γ ∪ {ε}) -> 2^(Q ✕ (Γ ∪ {ε})), where Γ is stack alphabet.
+  * Non-deterministic PDAs are strictly more powerful than deterministic PDAs.
+
+5. TURING MACHINES AND COMPUTABILITY
+----------------------------------------
+- Turing Machine (TM):
+  * A mathematical model of a computer.
+  * Consists of an infinite tape and a read/write head that can move Left or Right.
+  * Formal δ transition: Q ✕ Γ -> Q ✕ Γ ✕ {L, R}.
+  * Church-Turing Thesis: Any algorithm that can be computed can be programmed on a Turing Machine.
+  * Turing-Decidable (Recursive) vs. Turing-Recognizable (Recursively Enumerable).
+- Halting Problem:
+  * Deciding whether a given Turing Machine will halt on a given input.
+  * Proved to be Undecidable (cannot write a general program to solve this).
+
+6. CHOMSKY HIERARCHY
+----------------------------------------
+Classifies formal grammars:
+1. Type 3: Regular Grammars. Recognized by Finite Automata. (e.g., a^n b^m).
+2. Type 2: Context-Free Grammars. Recognized by Pushdown Automata. (e.g., a^n b^n).
+3. Type 1: Context-Sensitive Grammars. Recognized by Linear Bounded Automata. (e.g., a^n b^n c^n).
+4. Type 0: Unrestricted Grammars. Recognized by Turing Machines.

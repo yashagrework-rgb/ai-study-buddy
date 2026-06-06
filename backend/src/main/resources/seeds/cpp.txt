@@ -1,0 +1,56 @@
+C++ Programming & STL
+========================================
+
+1. CLASSES, OBJECTS & ACCESS SPECIFIERS
+----------------------------------------
+C++ introduces Object-Oriented programming to C.
+- Access Specifiers:
+  * `public`: Accessible from anywhere.
+  * `private`: Accessible only within the class. (Default specifier for classes).
+  * `protected`: Accessible within the class and its derived (child) classes.
+- Constructors & Destructors:
+  * Constructors initialize objects. Can be default, parameterized, or copy constructors.
+  * Destructors clean up resources when objects go out of scope. Indicated by tilde (~).
+  * Shallow Copy vs. Deep Copy: Shallow copy copies pointer addresses (leads to double free errors). Deep copy allocates new memory and copies the values.
+
+2. INHERITANCE AND POLYMORPHISM
+----------------------------------------
+- Multiple Inheritance: A class can inherit from more than one class.
+  * Diamond Problem: Occurs when a class inherits from two classes that both inherit from a single grandparent. Solved using `virtual` inheritance.
+  * Syntax: `class B : virtual public A {};`
+- Polymorphism:
+  * Compile-time: Function Overloading and Operator Overloading.
+  * Runtime: Achieved using Virtual Functions and Pointers.
+  * VTable and VPtr: The compiler creates a Virtual Table (vtable) for classes containing virtual functions, storing pointers to these functions. Every instance contains a virtual pointer (vptr) pointing to the vtable.
+  * Pure Virtual Function: `virtual void draw() = 0;` Makes the class an Abstract Class. Cannot instantiate abstract classes directly.
+
+3. TEMPLATES & GENERIC PROGRAMMING
+----------------------------------------
+Templates allow writing code independent of any particular data type.
+- Function Templates: `template <typename T> T add(T a, T b) { return a + b; }`
+- Class Templates: `template <class T> class Stack { T arr[100]; };`
+
+4. STANDARD TEMPLATE LIBRARY (STL)
+----------------------------------------
+STL is a library of container classes, algorithms, and iterators.
+- Containers:
+  * Sequence Containers:
+    - `std::vector`: Dynamic array. Contiguous memory allocation. O(1) random access, amortized O(1) insertion at end.
+    - `std::list`: Doubly-linked list. Non-contiguous memory. O(1) insertion/deletion anywhere if iterator is known, O(n) search.
+    - `std::deque`: Double-ended queue.
+  * Associative Containers:
+    - `std::set` & `std::map`: Sorted elements. Implemented as Red-Black Trees. Search, insertion, and deletion are O(log n).
+  * Unordered Associative Containers:
+    - `std::unordered_set` & `std::unordered_map`: Unsorted. Implemented using Hash Tables. O(1) average time complexity for search/insertion, O(n) worst-case due to collisions.
+- Iterators: Pointers used to traverse containers. `begin()`, `end()`.
+- Algorithms: Standard functions like `std::sort()`, `std::binary_search()`, `std::reverse()`, `std::find()`.
+
+5. MODERN C++ FEATURES (C++11/14/17/20)
+----------------------------------------
+- Smart Pointers (Memory safety without manual deletes):
+  * `std::unique_ptr`: Exclusive ownership of a resource. Cannot be copied, only moved.
+  * `std::shared_ptr`: Shared ownership. Keeps a reference count. Deallocates memory when reference count drops to 0.
+  * `std::weak_ptr`: Non-owning reference. Prevents cyclic reference leaks between shared pointers.
+- Move Semantics: Transfer of resource ownership without copying, using Rvalue references (`&&`) and `std::move()`.
+- Lambda Expressions: `auto my_lambda = [](int x, int y) { return x + y; };`
+- `auto` Keyword: Type inference by compiler.

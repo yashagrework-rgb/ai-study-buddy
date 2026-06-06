@@ -1,0 +1,46 @@
+React.js Library & Hooks
+========================================
+
+1. REACT CORE PRINCIPLES
+----------------------------------------
+React is a declarative, component-based, open-source JavaScript library for building user interfaces, maintained by Meta.
+- Component Architecture: UIs are broken down into small, isolated, reusable pieces of code called components.
+- Declarative vs. Imperative: In React, developers declare how the UI should look for a given state, rather than writing imperative step-by-step DOM manipulation steps.
+- Virtual DOM & Reconciliation:
+  * React maintains a virtual representation of the real DOM in memory.
+  * When state changes, a new Virtual DOM tree is created.
+  * Diffing Algorithm: React compares the new tree with the old tree.
+  * Reconciliation: React updates only the changed elements in the real DOM, optimizing render speeds. Uses the Fiber engine since React 16.
+
+2. JSX (JAVASCRIPT XML)
+----------------------------------------
+XML-like syntax extension to JavaScript. Allows writing HTML structures inside JS.
+- Compiled by Babel into standard JS (`React.createElement` calls).
+- Rules: Must return a single root element (or Fragment `<> </>`). Attribute names use camelCase (e.g., `className` instead of `class`, `tabIndex` instead of `tabindex`).
+
+3. STATE AND PROPS
+----------------------------------------
+- Props: Read-only data passed from parent component to child component. Facilitates unidirectional data flow.
+- State: Mutable, local data private to a component. Changing state triggers a component re-render.
+
+4. REACT HOOKS
+----------------------------------------
+Introduced in React 16.8, allowing functional components to use state and lifecycle methods.
+- `useState`: Declares state variables in a functional component.
+  * Syntax: `const [count, setCount] = useState(0);`
+- `useEffect`: Handles side effects (data fetching, subscriptions, manual DOM edits). Replaces lifecycle methods like componentDidMount, componentDidUpdate, and componentWillUnmount.
+  * Dependency Array: Empty array `[]` runs effect once on mount. Variable arrays run effect whenever dependencies change. Returning a function handles cleanups (unmount).
+- `useContext`: Consumes context values directly, avoiding prop-drilling.
+- `useRef`: Creates mutable objects persisting across renders. Does not trigger re-render on change. Used to reference DOM elements directly.
+- `useMemo`: Memoizes computed values to prevent expensive recalculations on every render.
+- `useCallback`: Memoizes callback function references, preventing unnecessary child component renders.
+
+5. CONTEXT API & STATE MANAGEMENT
+----------------------------------------
+- Context API: Native way to manage global state. Creates a Provider component that passes values down the component tree.
+- State Management libraries (e.g., Redux, Zustand): Used for complex apps with high-frequency updates or large state interactions.
+
+6. REACT ROUTING & PERFORMANCE
+----------------------------------------
+- Client-Side Routing: Handled by libraries like React Router. Intercepts browser anchor clicks to update the URL and swap components without refreshing the page.
+- Code Splitting: Using `React.lazy` and `Suspense` to load bundle chunks on demand, optimizing initial load times.

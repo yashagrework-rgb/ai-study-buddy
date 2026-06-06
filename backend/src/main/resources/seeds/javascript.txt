@@ -1,0 +1,59 @@
+Modern JavaScript (ES6+) & Runtime
+========================================
+
+1. JAVASCRIPT ENGINE & RUNTIME ENVIRONMENT
+----------------------------------------
+JavaScript is a single-threaded, non-blocking, asynchronous, concurrent runtime language.
+- JS Engine (e.g., Google V8):
+  * Call Stack: Keeps track of function execution frames. LIFO (Last In First Out).
+  * Memory Heap: Memory allocation for objects/variables.
+- Event Loop and Concurrency:
+  * Since JS is single-threaded, it delegates blocking operations (timers, HTTP requests) to Web APIs (browser) or C++ APIs (Node.js).
+  * Callback Queue / Task Queue: Where macro-tasks (setTimeout, DOM events) wait to be pushed onto the stack.
+  * Microtask Queue: Where micro-tasks (Promise callbacks, mutation observers) wait. Has higher priority than the Task Queue.
+  * Event Loop: Continuously checks if Call Stack is empty. If empty, it pushes the first micro-task, executes all micro-tasks, then pushes the first macro-task.
+
+2. VARIABLES, HOISTING, AND SCOPE
+----------------------------------------
+- Scope: Global Scope, Function Scope, Block Scope (introduced in ES6).
+- Declarations:
+  * `var`: Function-scoped. Hoisted with default value of `undefined`. Re-declarable.
+  * `let`: Block-scoped. Hoisted but remains in "Temporal Dead Zone" (TDZ) until declaration is reached. Cannot be re-declared in same scope.
+  * `const`: Block-scoped. Same hoisting as `let`. Read-only reference (value cannot be re-assigned).
+- Hoisting: Compiler behavior moving declarations to the top of their scope during compilation.
+
+3. CLOSURES AND SCOPE CHAIN
+----------------------------------------
+- Scope Chain: If a variable isn't found in local scope, JS checks outer scopes up to the global scope.
+- Closure: A function that remembers and accesses variables from its outer (lexical) scope even after the outer function has finished executing.
+  * Example:
+    ```javascript
+    function outer() {
+      let count = 0;
+      return function inner() { return ++count; };
+    }
+    const counter = outer();
+    counter(); // returns 1
+    ```
+
+4. OBJECT-ORIENTED JAVASCRIPT & PROTOTYPES
+----------------------------------------
+- Prototype Inheritance: Every JavaScript object has an internal link to another object called its prototype.
+- Prototype Chain: When looking up a property, JS traverses up the prototype chain (`__proto__`) until it finds it or reaches `null`.
+- Classes (ES6): Syntactic sugar over prototype inheritance.
+  * Syntax: `class Person { constructor(name) { this.name = name; } speak() {} }`
+
+5. ASYNCHRONOUS JAVASCRIPT
+----------------------------------------
+- Callbacks: Passing functions as arguments. Can lead to "Callback Hell" (nested code).
+- Promises: Represents eventual completion or failure of an async operation.
+  * States: Pending, Fulfilled, Rejected.
+  * Methods: `.then()`, `.catch()`, `.finally()`, `Promise.all()`, `Promise.race()`.
+- Async/Await (ES8): Syntactic sugar for working with Promises. Makes async code read like synchronous code. Built on top of generator functions.
+
+6. MODERN ES6+ FEATURES
+----------------------------------------
+- Destructuring: `const { name, age } = user;`
+- Spread & Rest Operators: `const newArr = [...arr];`
+- Arrow Functions: Shorter syntax. Do not bind their own `this` (lexical binding).
+- ES Modules: `import` and `export` statements for modular code.

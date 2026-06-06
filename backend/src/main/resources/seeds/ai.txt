@@ -1,0 +1,49 @@
+Artificial Intelligence Fundamentals
+========================================
+
+1. INTRODUCTION TO ARTIFICIAL INTELLIGENCE
+----------------------------------------
+Artificial Intelligence (AI) is the branch of computer science focused on building intelligent machines capable of performing tasks that typically require human intelligence.
+- Categorization of AI:
+  * Weak/Narrow AI: Designed and trained for a specific task (e.g., Siri, chess engines, recommendation systems).
+  * Strong/General AI (AGI): Theoretical AI with human-level cognitive capabilities across various domains.
+  * Super AI (ASI): AI that surpasses human intelligence in all aspects.
+
+2. STATE-SPACE SEARCH ALGORITHMS
+----------------------------------------
+Search is the foundation of problem-solving in classical AI.
+- Uninformed (Blind) Search: No knowledge about the path cost to the goal.
+  * Breadth-First Search (BFS): Explores level by level. Optimal, complete, O(b^d) time and space complexity.
+  * Depth-First Search (DFS): Explores deep paths first. Space efficient O(b*m), but not optimal or complete (can get stuck in loops).
+  * Uniform Cost Search (UCS): Explores nodes in order of path cost g(n). Optimal and complete.
+- Informed (Heuristic) Search: Uses a heuristic function h(n) to estimate distance to goal.
+  * Greedy Best-First Search: Explores nodes with lowest h(n). Fast but not optimal.
+  * A* Search: Minimizes total estimated cost f(n) = g(n) + h(n), where g(n) is path cost from start, and h(n) is heuristic estimate. Optimal and complete if h(n) is Admissible (never overestimates true cost) and Consistent.
+
+3. ADVERSARIAL GAME PLAYING
+----------------------------------------
+Used for games with perfect information like Chess or Tic-Tac-Toe.
+- Minimax Algorithm: Recursive algorithm where the Max player tries to maximize score, and the Min player tries to minimize score.
+- Alpha-Beta Pruning: Optimization technique for Minimax that eliminates branches that cannot influence the final decision.
+  * Alpha: Best choice found so far for Max (lower bound).
+  * Beta: Best choice found so far for Min (upper bound).
+  * Pruning condition: If alpha >= beta, prune the remaining sub-branches.
+
+4. KNOWLEDGE REPRESENTATION AND LOGIC
+----------------------------------------
+How an agent represents facts about the world.
+- Propositional Logic: Logic based on propositions (true/false variables) and logical connectives (AND, OR, NOT, Implies, Equivalent).
+- First-Order Logic (FOL): More expressive logic using objects, relations, functions, and quantifiers:
+  * Universal Quantifier (For All: 𝘝)
+  * Existential Quantifier (There Exists: Ǝ)
+- Inference Engines: Modus Ponens, Resolution, Forward Chaining (data-driven), and Backward Chaining (goal-driven).
+
+5. CONSTRAINT SATISFACTION PROBLEMS (CSPs)
+----------------------------------------
+Problems where states must satisfy a set of constraints (e.g., Sudoku, Map Coloring, N-Queens).
+- Variables, Domains, Constraints.
+- Backtracking Search: Depth-first search for CSPs.
+- Heuristics:
+  * Minimum Remaining Values (MRV): Choose variable with fewest legal values left.
+  * Least Constraining Value (LCV): Choose value that leaves maximum flexibility for neighboring variables.
+  * Arc Consistency (AC-3): Algorithmic check to reduce variable domains based on constraints.

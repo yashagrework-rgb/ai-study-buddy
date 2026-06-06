@@ -1,0 +1,56 @@
+C Procedural Programming
+========================================
+
+1. PROCEDURAL PROGRAMMING PARADIGM
+----------------------------------------
+C is a procedural programming language. It is structured around functions rather than objects or data. Programs are written as a sequence of steps or routines.
+- Key characteristics: Top-down approach, focus on procedures (functions), global data sharing, local variables, and direct access to memory via pointers.
+
+2. POINTERS AND MEMORY ADDRESSING
+----------------------------------------
+Pointers are variables that store the memory address of another variable.
+- Declaring and Dereferencing:
+  * `int x = 10;`
+  * `int *p = &x;` (p stores address of x)
+  * `int val = *p;` (val becomes 10 via dereferencing)
+- Pointer Arithmetic: Incrementing a pointer increases its address by the size of the data type it points to.
+- Double Pointers (Pointers to Pointers): `int **dp = &p;` Used for multi-dimensional arrays or modifying pointers inside functions.
+- Function Pointers: Variables that point to the address of a function. Used to pass functions as callbacks.
+  * Syntax: `void (*func_ptr)(int) = &my_function;`
+
+3. DYNAMIC MEMORY MANAGEMENT
+----------------------------------------
+C does not have garbage collection. Developers must allocate and deallocate heap memory manually.
+- `malloc(size_t size)`: Allocates 'size' bytes of uninitialized memory on the heap. Returns a `void*` pointer.
+- `calloc(size_t num, size_t size)`: Allocates memory for an array of 'num' elements of 'size' bytes each, and initializes all bytes to zero.
+- `realloc(void *ptr, size_t new_size)`: Resizes previously allocated heap memory.
+- `free(void *ptr)`: Deallocates heap memory. Failing to free memory leads to Memory Leaks. Referencing a freed pointer leads to Dangling Pointers.
+
+4. STRUCTURES AND UNIONS
+----------------------------------------
+- Structure (struct): User-defined data type grouping variables of different types.
+  * Memory Allocation: Members have separate memory locations. Total size is the sum of member sizes plus padding bytes for CPU alignment.
+  * Syntax: `struct Student { char name[50]; int roll; };`
+- Union: Similar to structures, but all members share the same memory location.
+  * Memory Allocation: Size is equal to the size of the largest member. Modifying one member overwrites others.
+  * Syntax: `union Data { int i; float f; };`
+
+5. PREPROCESSOR DIRECTIVES
+----------------------------------------
+The C preprocessor is a macro processor that transforms the source code before compilation.
+- `#include`: Inserts the contents of a header file. `<filename>` searches system directories; `"filename"` searches current directory.
+- `#define`: Creates macros (text substitution).
+- Conditional Compilation: `#ifdef`, `#ifndef`, `#if`, `#else`, `#endif`. Prevents duplicate header files via Header Guards:
+  * `#ifndef HEADER_FILE_H`
+  * `#define HEADER_FILE_H`
+  * `// declarations`
+  * `#endif`
+
+6. STANDARD INPUT/OUTPUT AND FILE I/O
+----------------------------------------
+- Standard Streams: `stdin` (keyboard), `stdout` (screen), `stderr` (error logging).
+- File operations:
+  * `FILE *fptr = fopen("file.txt", "r");` (modes: "r", "w", "a", "rb", "wb")
+  * Reading: `fscanf()`, `fgets()`, `fread()`, `fgetc()`.
+  * Writing: `fprintf()`, `fputs()`, `fwrite()`, `fputc()`.
+  * Closing: `fclose(fptr);` must be called to flush buffers and release system descriptors.

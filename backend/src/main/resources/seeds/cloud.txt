@@ -1,0 +1,42 @@
+Cloud Computing & DevOps Concepts
+========================================
+
+1. CLOUD COMPUTING MODELS
+----------------------------------------
+Cloud computing is the on-demand delivery of IT resources over the Internet with pay-as-you-go pricing.
+- Service Models:
+  * IaaS (Infrastructure as a Service): Renting servers, storage, virtual machines, and networking (e.g., AWS EC2, GCP Compute Engine). Maximum control.
+  * PaaS (Platform as a Service): Providers manage OS, runtime, and databases; developers focus on code (e.g., Heroku, AWS Elastic Beanstalk, Render).
+  * SaaS (Software as a Service): End-user applications delivered over the web (e.g., Gmail, Slack, Salesforce).
+- Deployment Models:
+  * Public Cloud: Resources owned and operated by a third-party provider, shared across multiple tenants.
+  * Private Cloud: Infrastructure dedicated to a single organization.
+  * Hybrid Cloud: Combines public and private clouds, allowing data/apps to be shared between them.
+
+2. VIRTUALIZATION AND CONTAINERS
+----------------------------------------
+- Hypervisor-based Virtualization (VMs): A hypervisor splits hardware into isolated virtual machines, each running a full guest Operating System. High resource overhead.
+- Containerization: Containers share the host OS kernel and package only the application and its dependencies. Lightweight, fast startup, highly portable.
+- Docker: De-facto standard for containerization.
+  * Dockerfile: Text file containing instructions to build a Docker Image.
+  * Docker Image: Read-only template containing application environment.
+  * Docker Container: Runnable instance of an image.
+
+3. CONTAINER ORCHESTRATION (KUBERNETES)
+----------------------------------------
+Automates deployment, scaling, and management of containerized applications.
+- Kubernetes (K8s) Architecture:
+  * Control Plane (Master Node): Manages the cluster (API Server, Scheduler, Controller Manager, etcd key-value store).
+  * Worker Nodes: Run the containerized applications.
+  * Pod: Smallest deployable unit in K8s. Group of one or more containers sharing network/storage resources.
+  * Service: Exposes pods to network traffic, acting as a internal/external load balancer.
+  * Deployment: Declares desired state for pods (e.g., run 3 replicas) and manages rolling updates.
+
+4. DEVOPS PRINCIPLES AND PRACTICE
+----------------------------------------
+DevOps is a set of practices combining software development (Dev) and IT operations (Ops) to shorten development life cycles and deliver high-quality software continuously.
+- Key Pillars:
+  * CI/CD (Continuous Integration / Continuous Delivery): Automating code building, testing, and deployment.
+  * Infrastructure as Code (IaC): Managing infrastructure using configuration files rather than manual setups (e.g., Terraform, Ansible). Prevents configuration drift.
+  * Monitoring and Logging: Continuous observation of application health, throughput, and error rates using tools like Prometheus, Grafana, ELK stack (Elasticsearch, Logstash, Kibana).
+  * Microservices and Automation.

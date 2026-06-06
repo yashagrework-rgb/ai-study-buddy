@@ -1,0 +1,47 @@
+Deep Learning & Neural Networks
+========================================
+
+1. FOUNDATIONS OF DEEP LEARNING
+----------------------------------------
+Deep Learning is a subset of Machine Learning that uses multi-layered artificial neural networks (ANNs) to learn representations of data.
+- The Perceptron: The basic unit of a neural network. It takes inputs, applies weights, adds a bias, and passes the sum through an activation function.
+  * Formula: y = f( ∑ (w_i * x_i) + b )
+- Activation Functions: Introduce non-linearity into the network, allowing it to learn complex non-linear patterns.
+  * Sigmoid: Maps values between 0 and 1. Suffers from vanishing gradient problem.
+  * Tanh: Maps values between -1 and 1.
+  * ReLU (Rectified Linear Unit): f(x) = max(0, x). Standard for hidden layers. Avoids vanishing gradients but can suffer from "dying ReLU" (neurons getting stuck at zero).
+  * Leaky ReLU: f(x) = max(0.01x, x). Solves dying ReLU.
+  * Softmax: Converts outputs into probability distributions. Standard for multiclass classification output layers.
+
+2. TRAINING NEURAL NETWORKS
+----------------------------------------
+- Forward Propagation: Input passes through layers, computing activations to produce an output prediction.
+- Loss / Cost Function: Quantifies the difference between prediction and actual target (e.g., Mean Squared Error for regression, Binary Cross-Entropy or Categorical Cross-Entropy for classification).
+- Backward Propagation: Computes gradients of the loss function with respect to the weights using the Chain Rule of calculus. Gradients flow backwards from the output layer to the input.
+- Optimization Algorithms: Updates weights based on gradients to minimize loss.
+  * Stochastic Gradient Descent (SGD): Updates weights using single samples or mini-batches.
+  * Adam (Adaptive Moment Estimation): Combines momentum (moving average of gradients) and RMSprop (moving average of squared gradients) for adaptive learning rates.
+
+3. CONVOLUTIONAL NEURAL NETWORKS (CNNs)
+----------------------------------------
+Designed for grid-like data such as images.
+- Convolutional Layers: Applies sliding filters (kernels) over the input image to extract feature maps (detect edges, textures, shapes). Preserves spatial relationships.
+- Pooling Layers: Performs downsampling to reduce spatial dimensions and parameter count, providing translation invariance. Max Pooling (takes maximum value in window) is most common.
+- Fully Connected (FC) Layers: Traditional dense layer at the end of the network that performs final classification.
+
+4. RECURRENT NEURAL NETWORKS (RNNs) & LSTMs
+----------------------------------------
+Designed for sequential data (time-series, text, speech).
+- RNNs: Maintain a hidden state that acts as memory, processing inputs sequentially. Suffers from vanishing/exploding gradients over long sequences.
+- LSTM (Long Short-Term Memory): Solves vanishing gradients using a cell state and three gates:
+  * Forget Gate: Decides what information to discard from cell state.
+  * Input Gate: Decides what new information to store in cell state.
+  * Output Gate: Decides what the next hidden state should be.
+- GRU (Gated Recurrent Unit): Simpler LSTM variant combining cell and hidden states into a single state, using Reset and Update gates.
+
+5. TRANSFORMERS AND THE ATTENTION MECHANISM
+----------------------------------------
+The modern standard for NLP and sequential tasks (GPT, BERT).
+- Self-Attention: Allows the network to focus on different parts of the input sequence regardless of distance, processing tokens in parallel (unlike sequential RNNs).
+- Query, Key, Value vectors: Formulates attention calculation: Attention(Q, K, V) = softmax( (Q K^T) / sqrt(d_k) ) V.
+- Multi-Head Attention: Computes attention multiple times in parallel with different linear projections, capturing diverse contextual relationships.

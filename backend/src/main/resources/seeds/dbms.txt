@@ -1,0 +1,69 @@
+Database Management Systems (DBMS) Architecture
+========================================
+
+1. DATA ARCHITECTURE AND INDEPENDENCE
+----------------------------------------
+- Three-Schema Architecture (ANSI-SPARC):
+  * External Level (View Level): Describes user interaction with database.
+  * Conceptual Level (Logical Level): Describes what data is stored and relationships.
+  * Internal Level (Physical Level): Describes physical storage structure and paths.
+- Data Independence:
+  * Logical Data Independence: Ability to modify conceptual schema without changing external schemas or applications.
+  * Physical Data Independence: Ability to modify physical schema without changing conceptual schemas.
+
+2. RELATIONAL ALGEBRA
+----------------------------------------
+A procedural query language used to model relational databases.
+- Unary Operations:
+  * Select (σ): Filters rows based on a condition.
+  * Project (π): Selects specific columns.
+  * Rename (ρ): Renames relation or columns.
+- Binary Operations:
+  * Union (∪), Intersection (∩), Set Difference (-).
+  * Cartesian Product (✕): Pairs all rows.
+  * Joins (⋈): Combines related rows.
+
+3. DATABASE NORMALIZATION
+----------------------------------------
+Process of organizing data to minimize redundancy and dependency.
+- Anomalies: Insertion, Update, and Deletion anomalies caused by data redundancy.
+- Normal Forms:
+  * 1NF (First Normal Form): Atomic values. No repeating groups.
+  * 2NF (Second Normal Form): Must be in 1NF. No Partial Dependency (no non-prime attribute should depend on a subset of a candidate key).
+  * 3NF (Third Normal Form): Must be in 2NF. No Transitive Dependency (non-prime attributes must not depend on other non-prime attributes).
+  * BCNF (Boyce-Codd Normal Form): Stronger version of 3NF. For any functional dependency X -> Y, X must be a super key.
+  * 4NF & 5NF: Handle Multi-valued Dependencies and Join Dependencies.
+
+4. TRANSACTION MANAGEMENT & ACID PROPERTIES
+----------------------------------------
+A transaction is a logical unit of database processing.
+- ACID Properties:
+  * Atomicity: Entire transaction succeeds, or entire transaction fails (All or Nothing). Managed by Recovery Manager (rollback).
+  * Consistency: Database must transition from one valid state to another.
+  * Isolation: Concurrent transactions must execute without interference. Managed by Concurrency Control.
+  * Durability: Committed changes survive system failures. Managed by log files and recovery algorithms.
+
+5. CONCURRENCY CONTROL
+----------------------------------------
+Allows multiple transactions to run concurrently without violating database integrity.
+- Problems: Lost Update, Dirty Read (reading uncommitted data), Non-repeatable Read, Phantom Read.
+- Schedules: Serial schedules (one after another), Serializable schedules (equivalent to some serial schedule).
+- Protocols:
+  * Two-Phase Locking (2PL): Ensures serializability by acquiring locks in two phases:
+    - Growing Phase: Transaction obtains locks, cannot release any.
+    - Shrinking Phase: Transaction releases locks, cannot obtain new ones.
+    - Strict 2PL: Releases exclusive locks only at transaction end. Prevents cascading rollbacks.
+  * Timestamp Ordering: Orders transactions based on timestamps.
+  * Optimistic Concurrency Control (OCC): Assumes conflicts are rare. Validates transactions before committing.
+
+6. CRASH RECOVERY
+----------------------------------------
+- Log-Based Recovery: Tracks all database modifications in a Write-Ahead Log (WAL) before writing to disk.
+- Checkpoints: Periodically flushes modifications to disk to reduce log processing time during recovery.
+- ARIES Algorithm: Advanced recovery algorithm involving Analysis (identifies active transactions), Redo (replays history), and Undo (rolls back uncommitted transactions) phases.
+
+7. NOSQL DATABASES
+----------------------------------------
+Non-relational databases designed for scale, flexibility, and high performance.
+- Types: Document (MongoDB), Key-Value (Redis), Column-Family (Cassandra), Graph (Neo4j).
+- CAP Theorem: A distributed database can guarantee at most two of: Consistency, Availability, and Partition Tolerance.

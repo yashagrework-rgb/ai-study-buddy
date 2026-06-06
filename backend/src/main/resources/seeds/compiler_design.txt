@@ -1,0 +1,51 @@
+Compiler Design & Parsing
+========================================
+
+1. STRUCTURE OF A COMPILER
+----------------------------------------
+A compiler translates source code written in a high-level language into low-level machine or assembly code. It consists of two main parts: Analysis (Front End) and Synthesis (Back End), organized into six phases:
+1. Lexical Analyzer: Scans characters, groups them into tokens.
+2. Syntax Analyzer (Parser): Constructs a syntax/parse tree verifying structural rules.
+3. Semantic Analyzer: Verifies type checking, scope rules, and declarations.
+4. Intermediate Code Generator (ICG): Translates code into machine-independent representation (e.g., three-address code).
+5. Code Optimizer: Streamlines intermediate code for speed/size.
+6. Code Generator: Translates optimized intermediate code to target machine assembly.
+- Symbol Table: Database storing information about all program identifiers (variables, functions, types). Accessed by all compiler phases.
+
+2. LEXICAL ANALYSIS
+----------------------------------------
+- Role: Converts stream of characters into tokens (logical units: keywords, operators, identifiers).
+- Tools: Uses Regular Expressions to specify token patterns and Finite Automata to implement scanners.
+- Lexical Errors: Unrecognized character sequences, invalid identifier formats.
+
+3. SYNTAX ANALYSIS (PARSING)
+----------------------------------------
+Groups tokens into structured trees based on a Context-Free Grammar.
+- Top-Down Parsers: Construct parse trees from the root (Start symbol) down to the leaves (tokens).
+  * Recursive Descent Parser: Uses recursive functions to implement grammar rules.
+  * LL(1) Parser: Predictive, non-recursive table-driven parser. (Left-to-right scan, Leftmost derivation, 1 lookahead token). Requires eliminating Left Recursion and performing Left Factoring to construct parsing tables (First & Follow sets).
+- Bottom-Up Parsers: Construct parse trees from the leaves up to the root, using Shift-Reduce actions.
+  * Shift-Reduce actions: Shift (pushes token to stack), Reduce (replaces stack top symbols with matching grammar LHS variable).
+  * LR Parsers: Left-to-right scan, Rightmost derivation in reverse. Table-driven.
+    - LR(0): Uses DFA of items. No lookahead.
+    - SLR(1): Simpler lookahead using Follow sets.
+    - Canonical LR(1): Full lookahead. Very powerful but tables are massive.
+    - LALR(1): Merges LR(1) states with identical core items, reducing table sizes. Used by parser generators like Yacc/Bison.
+
+4. SYNTAX-DIRECTED TRANSLATION (SDT)
+----------------------------------------
+Associates semantic rules with grammar productions to evaluate and execute actions during parsing.
+- Attributes:
+  * Synthesized Attributes: Computed from child nodes in parse tree.
+  * Inherited Attributes: Computed from parent or sibling nodes.
+- S-attributed definitions: Use only synthesized attributes. Can be evaluated during bottom-up parsing.
+- L-attributed definitions: Attributes can depend on parent or left-siblings. Can be evaluated during top-down parsing.
+
+5. CODE GENERATION AND OPTIMIZATION
+----------------------------------------
+- Intermediate Representations (IR): AST (Abstract Syntax Tree), DAG (Directed Acyclic Graph), Three-Address Code (statements of form `x = y op z`).
+- Optimization techniques:
+  * Loop Optimization: Loop-invariant code motion, loop unrolling.
+  * Compile-Time Evaluation: Constant folding, constant propagation.
+  * Redundancy: Common subexpression elimination, dead code elimination.
+- Register Allocation: Maps variables to physical CPU registers using Graph Coloring algorithms.

@@ -1,0 +1,50 @@
+Software Engineering Methodologies & SDLC
+========================================
+
+1. SOFTWARE DEVELOPMENT LIFE CYCLE (SDLC)
+----------------------------------------
+A systematic process for building software that ensures quality and correctness.
+- SDLC Phases:
+  1. Requirements Gathering & Analysis: SRS (Software Requirements Specification) document created.
+  2. Design: Architecture design (High-Level Design - HLD, Low-Level Design - LLD).
+  3. Coding / Implementation: Developers write code.
+  4. Testing: Verifies functionality against requirements.
+  5. Deployment: Releasing the app to staging/production.
+  6. Maintenance: Bug fixes, updates, adaptations.
+
+2. SOFTWARE PROCESS MODELS
+----------------------------------------
+- Waterfall Model: Linear, sequential model. Phase must complete before next begins. Rigid, but easy to manage for stable requirements.
+- V-Model (Verification & Validation): Extension of waterfall. Design phases have corresponding testing phases.
+- Spiral Model: Iterative model focused on risk assessment. Best for large, high-risk projects.
+- Agile Model: Iterative development focusing on small, incremental releases, collaboration, and adaptability.
+  * Scrum Framework:
+    - Sprints: Fixed-length development iterations (e.g., 2 weeks).
+    - Roles: Product Owner (defines product backlog), Scrum Master (removes blockers), Development Team.
+    - Ceremonies: Sprint Planning, Daily Standup, Sprint Review, Sprint Retrospective.
+
+3. SOFTWARE TESTING TECHNIQUES
+----------------------------------------
+Testing verifies that the software works as intended and is bug-free.
+- White-Box Testing (Structural): Tests internal code paths, logic, and branches. E.g., Unit Testing.
+- Black-Box Testing (Functional): Tests output against input specifications without knowing internal code. E.g., Integration, System, Acceptance testing.
+- Test Levels:
+  * Unit Testing: Verifies individual functions/classes (e.g., JUnit, Jest).
+  * Integration Testing: Verifies interaction between modules.
+  * System Testing: Verifies the entire integrated application.
+  * UAT (User Acceptance Testing): Final check by client/users before release.
+- Regression Testing: Re-running tests to ensure code modifications didn't break existing functionality.
+
+4. DESIGN PATTERNS
+----------------------------------------
+Reusable solutions to common software design problems.
+- Creational: Singleton (one instance per app), Factory Method (instantiates objects without exposing creation logic), Builder (constructs complex objects step-by-step).
+- Structural: Adapter (interfaces compatibility), Decorator (adds dynamic behavior), Facade (simplifies interface to large subsystem).
+- Behavioral: Observer (event-subscription notification), Strategy (encapsulates algorithms).
+
+5. DEVOPS AND CI/CD
+----------------------------------------
+Bridge between development and operations teams.
+- Continuous Integration (CI): Developers merge code frequently to main branch, triggering automated builds and tests.
+- Continuous Deployment (CD): Automatically deploys tested code changes to production servers.
+- Version Control: Git branching models (Gitflow, Trunk-based development).

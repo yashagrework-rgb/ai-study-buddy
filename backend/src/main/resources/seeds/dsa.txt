@@ -1,0 +1,56 @@
+Data Structures & Algorithms (DSA)
+========================================
+
+1. ALGORITHMIC ANALYSIS
+----------------------------------------
+- Complexity:
+  * Time Complexity: Measure of how execution time increases with input size (N).
+  * Space Complexity: Measure of extra memory required by the algorithm.
+- Asymptotic Notations:
+  * Big O (O): Upper bound. Represents worst-case performance.
+  * Omega (Ω): Lower bound. Represents best-case performance.
+  * Theta (Θ): Tight bound. Represents average performance.
+- Common Complexities: O(1) < O(log N) < O(N) < O(N log N) < O(N^2) < O(2^N).
+
+2. LINEAR DATA STRUCTURES
+----------------------------------------
+- Arrays: Contiguous memory. O(1) access by index. Insertion and deletion are O(N) due to element shifting.
+- Linked Lists: Dynamic size. Non-contiguous nodes containing data and pointers.
+  * Single Linked List: Nodes point to next.
+  * Double Linked List: Nodes point to previous and next. O(1) deletions if node pointer is known.
+- Stacks: LIFO (Last In First Out). Basic operations: push, pop, peek. Implemented via arrays or linked lists. O(1) operations.
+- Queues: FIFO (First In First Out). Basic operations: enqueue, dequeue.
+  * Deque (Double Ended Queue): Supports inserts/deletes at both ends.
+  * Priority Queue: Elements processed by priority. Implemented using Heaps.
+
+3. NON-LINEAR DATA STRUCTURES
+----------------------------------------
+- Trees: Hierarchical structures of nodes.
+  * Binary Search Tree (BST): Left child < parent < right child. Search is O(log N) average, O(N) worst-case (skewed tree).
+  * AVL Tree: Self-balancing BST. Height difference of left/right subtrees (balance factor) is at most 1. Insertion/Deletion triggers rotations. O(log N) worst-case.
+  * Heaps: Complete binary trees.
+    - Max-Heap: Parent key >= child keys. Root is maximum.
+    - Min-Heap: Parent key <= child keys. Root is minimum.
+- Graphs: Set of vertices (V) and edges (E).
+  * Representations: Adjacency Matrix (dense graphs) or Adjacency List (sparse graphs).
+  * Traversals:
+    - Breadth-First Search (BFS): Uses a queue. Finds shortest path in unweighted graphs. O(V + E).
+    - Depth-First Search (DFS): Uses recursion/stack. Used for topological sorting. O(V + E).
+
+4. SORTING AND SEARCHING ALGORITHMS
+----------------------------------------
+- Searching:
+  * Linear Search: O(N) on unsorted arrays.
+  * Binary Search: O(log N) on sorted arrays. Halves search space.
+- Sorting:
+  * Bubble, Selection, Insertion Sorts: O(N^2) time.
+  * Merge Sort: Divide & Conquer. Recursively splits, sorts, and merges. Stable. O(N log N) space/time.
+  * Quick Sort: Chooses a pivot, partitions array. Unstable. O(N log N) average time, O(N^2) worst-case.
+  * Heap Sort: Builds heap, extracts max. O(N log N) time, O(1) auxiliary space.
+
+5. ALGORITHMIC PARADIGMS
+----------------------------------------
+- Divide and Conquer: Splits problem into subproblems, solves, and combines (e.g., Merge Sort, Binary Search).
+- Greedy: Makes locally optimal choices at each step, hoping for a global optimum (e.g., Dijkstra's, Kruskal's MST).
+- Dynamic Programming (DP): Solves problems by breaking them into overlapping subproblems, storing results in a table (memoization/tabulation) to avoid redundant computation (e.g., Fibonacci, Knapsack).
+- Backtracking: Explores paths; if a path leads to a dead end, it backtracks and tries another (e.g., N-Queens).

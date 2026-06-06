@@ -1,0 +1,52 @@
+HTML5 Structure & Semantic Web
+========================================
+
+1. INTRODUCTION TO HTML5
+----------------------------------------
+HyperText Markup Language (HTML) is the standard markup language for documents designed to be displayed in a web browser. HTML5 is the latest major version, introducing native APIs and clean semantic elements.
+- Basic Document Structure:
+  * `<!DOCTYPE html>`: Tells browser to render using modern HTML5 standards.
+  * `<html>`: Root element.
+  * `<head>`: Metadata, title, script/style sheets link location.
+  * `<body>`: Visible web page content.
+
+2. SEMANTIC HTML5 ELEMENTS
+----------------------------------------
+Semantic elements clearly describe their meaning to both the browser and the developer.
+- Non-Semantic: `<div>`, `<span>` (tell nothing about content).
+- Semantic:
+  * `<header>`: Header section of a page or section.
+  * `<nav>`: Navigation links container.
+  * `<main>`: Main, unique content of the document. Only one per page.
+  * `<article>`: Self-contained composition (blog post, news article).
+  * `<section>`: Thematic grouping of content.
+  * `<aside>`: Side content or callouts (sidebar).
+  * `<footer>`: Footer section of a page or section.
+- SEO and Accessibility benefits: Search engine spiders parse semantic structure to index page topics. Screen readers navigate pages easily using semantic landmarks.
+
+3. FORMS AND INPUT VALIDATION
+----------------------------------------
+HTML5 offers native forms validation and controls, reducing JavaScript overhead.
+- Form element: `<form action="/submit" method="POST">`
+- Inputs: `<input type="text">`, `<input type="email">`, `<input type="password">`, `<input type="number">`, `<input type="date">`.
+- Attributes:
+  * `required`: Field must be filled before submission.
+  * `placeholder`: Temporary hint inside input.
+  * `pattern`: Regex validation pattern (e.g., `pattern="[A-Za-z]{3}"`).
+  * `min`, `max`, `step` for numeric ranges.
+
+4. MULTIMEDIA AND GRAPHICS
+----------------------------------------
+- Native Audio & Video: Eliminates third-party plugins.
+  * `<video width="320" height="240" controls><source src="movie.mp4" type="video/mp4"></video>`
+  * `<audio controls><source src="sound.mp3" type="audio/mpeg"></audio>`
+- Graphics:
+  * SVG (Scalable Vector Graphics): XML-based vector format. Remains crisp at any resolution. Can be styled with CSS.
+  * Canvas: JavaScript-driven bitmap drawing area. Best for games or complex pixel manipulations.
+
+5. WEB ACCESSIBILITY (a11y)
+----------------------------------------
+Designing websites usable by people of all abilities.
+- ALT attributes: Every image must have an alternative text description (`<img src="logo.png" alt="Company Logo">`).
+- ARIA (Accessible Rich Internet Applications) Roles: Attributes added to elements when semantic HTML isn't enough (e.g., `role="button"`, `aria-label="Close menu"`).
+- Keyboard Navigation: Ensure users can navigate interactive elements using Tab, guided by `tabindex`.

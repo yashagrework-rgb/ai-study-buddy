@@ -1,0 +1,46 @@
+Python Language & Ecosystem
+========================================
+
+1. CORE PHILOSOPHY AND FEATURES
+----------------------------------------
+Python is an interpreted, high-level, dynamically typed language.
+- Key principles: "Readability counts," "Explicit is better than implicit" (The Zen of Python).
+- Interpreted execution: Python source code is compiled into bytecode (.pyc) and executed by the Python Virtual Machine (PVM).
+- Dynamic Typing: Variable types are binding at runtime rather than compile-time.
+
+2. CORE DATA STRUCTURES
+----------------------------------------
+- Lists: Ordered, mutable, heterogeneous arrays. Automatically resized. Insertion/deletion in middle is O(n).
+- Tuples: Ordered, immutable sequences. Faster than lists. Used for write-protected data and dictionary keys.
+- Dictionaries: Unordered key-value pairs (ordered by insertion since Python 3.7). Uses hash tables. O(1) average lookup/insertion. Keys must be hashable/immutable.
+- Sets: Unordered collection of unique, hashable elements. Uses hash table under the hood. Useful for mathematical set operations (union, intersection).
+
+3. ADVANCED FUNCTIONAL FEATURES
+----------------------------------------
+- List/Dict Comprehensions: Compact syntax for creating collections. E.g., `[x*x for x in range(10) if x % 2 == 0]`
+- Generators: Yield values one at a time using the `yield` keyword. Lazy evaluation saves memory. Return iterator objects.
+- Decorators: Functions that modify the behavior of another function or class without modifying its structure. Uses closure concepts.
+  * Syntax: `@my_decorator` before a function definition.
+- Iterators: Objects that implement `__iter__()` and `__next__()` methods.
+
+4. OBJECT-ORIENTED PYTHON
+----------------------------------------
+- Classes: Created using the `class` keyword.
+- Self parameter: Represents the instance of the class. Passed explicitly as the first argument in method definitions.
+- Constructor: The `__init__` method.
+- Dunder/Magic Methods: Double-underscore methods like `__str__`, `__repr__`, `__len__`, `__add__` which allow custom operator and built-in behaviors.
+- Multiple Inheritance: Python supports multiple inheritance and uses Method Resolution Order (MRO) with C3 Linearization to resolve conflicts. Accessible via `super()`.
+
+5. MEMORY MANAGEMENT & GC
+----------------------------------------
+- Reference Counting: Every object tracks how many references point to it. When reference count drops to 0, memory is immediately freed.
+- Garbage Collector: Detects and resolves cyclic references (A points to B, B points to A, but both are unreachable). Uses generational collection (3 generations).
+- GIL (Global Interpreter Lock): A mutex that protects access to Python objects, preventing multiple native threads from executing Python bytecodes at once. Limits multi-core performance for CPU-bound tasks (solved via `multiprocessing` instead of `threading`).
+
+6. ECOSYSTEM & DEPLOYMENT
+----------------------------------------
+- Package Manager: `pip` (Python package installer). Uses PyPI repository.
+- Virtual Environments: `venv` or `virtualenv` isolates dependencies for different projects.
+- Libraries:
+  * Web Frameworks: Django (batteries-included, MVC), Flask (micro-framework).
+  * Data Science: NumPy (C-optimized arrays), Pandas (DataFrames), Matplotlib (plotting), Scikit-Learn (Machine learning).

@@ -1,0 +1,65 @@
+Structured Query Language (SQL) & Queries
+========================================
+
+1. RELATIONAL DATABASE CONCEPTS
+----------------------------------------
+A relational database organizes data into tables (relations) with rows (tuples) and columns (attributes).
+- Schema: The structure defining tables, columns, data types, and relationships.
+- Keys:
+  * Super Key: Set of one or more columns that uniquely identifies a row.
+  * Candidate Key: Minimal Super Key.
+  * Primary Key: A candidate key chosen to uniquely identify each row. Cannot be NULL.
+  * Foreign Key: A column that establishes a link between data in two tables, referencing the Primary Key of another table.
+
+2. SQL COMMANDS CLASSIFICATION
+----------------------------------------
+- DDL (Data Definition Language): Defines the database structure.
+  * `CREATE`, `ALTER`, `DROP`, `TRUNCATE` (removes all records but keeps schema).
+- DML (Data Manipulation Language): Modifies data records.
+  * `INSERT`, `UPDATE`, `DELETE`.
+- DQL (Data Query Language): Retrieves data.
+  * `SELECT`.
+- DCL (Data Control Language): Controls security and access.
+  * `GRANT`, `REVOKE`.
+- TCL (Transaction Control Language): Manages database transactions.
+  * `COMMIT`, `ROLLBACK`, `SAVEPOINT`.
+
+3. SQL JOINS
+----------------------------------------
+Joins combine columns from one or more tables based on a related column.
+- INNER JOIN: Returns records that have matching values in both tables.
+- LEFT (OUTER) JOIN: Returns all records from the left table, and matched records from the right table. If no match, right side is NULL.
+- RIGHT (OUTER) JOIN: Returns all records from the right table, and matched records from the left table.
+- FULL (OUTER) JOIN: Returns all records when there is a match in either left or right table.
+- CROSS JOIN: Returns the Cartesian product of both tables (every row of table A paired with every row of table B).
+- SELF JOIN: A regular join where a table is joined with itself.
+
+4. AGGREGATIONS AND GROUP BY
+----------------------------------------
+- Aggregate Functions: `COUNT()`, `SUM()`, `AVG()`, `MIN()`, `MAX()`.
+- GROUP BY: Groups rows that have the same values into summary rows.
+- HAVING: Used instead of `WHERE` to filter groups created by `GROUP BY` based on aggregate conditions.
+  * Difference: `WHERE` filters rows before aggregation; `HAVING` filters groups after aggregation.
+
+5. SUBQUERIES AND COMMON TABLE EXPRESSIONS (CTEs)
+----------------------------------------
+- Subquery (Nested Query): A query inside another query. Can be scalar, column, or correlated (references outer query fields).
+- CTEs: Temporary named result sets defined using the `WITH` clause. Improves readability.
+  * Syntax: `WITH ActiveUsers AS (SELECT id FROM users WHERE status = 'active') SELECT * FROM ActiveUsers;`
+
+6. ANALYTICAL AND WINDOW FUNCTIONS
+----------------------------------------
+Window functions perform calculations across a set of table rows that are related to the current row, without collapsing the result.
+- Syntax: `FUNCTION() OVER (PARTITION BY col1 ORDER BY col2)`
+- Functions:
+  * `ROW_NUMBER()`: Assigns a unique sequential integer to rows.
+  * `RANK()`: Assigns rank with gaps if duplicates exist.
+  * `DENSE_RANK()`: Assigns rank without gaps.
+  * `LEAD()` and `LAG()`: Accesses data from subsequent or previous rows.
+
+7. INDEXING AND QUERY OPTIMIZATION
+----------------------------------------
+- Index: Database structure used to speed up data retrieval at the cost of slower write speeds.
+  * B-Tree Index: Default index. Balanced tree structure suitable for equality and range queries.
+  * Hash Index: Fastest lookup but only supports equality queries.
+- Execution Plan: Output of the query optimizer (using `EXPLAIN`) showing how database will execute a query (scans, index hits, joins).

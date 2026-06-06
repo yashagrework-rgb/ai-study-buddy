@@ -9,6 +9,7 @@ import com.studybuddy.repository.UserRepository;
 import com.studybuddy.security.JwtUtils;
 import com.studybuddy.security.UserDetailsImpl;
 import com.studybuddy.service.ProgressService;
+import com.studybuddy.service.NoteSeederService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,9 @@ public class AuthController {
 
     @Autowired
     private ProgressService progressService;
+
+    @Autowired
+    private NoteSeederService noteSeederService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -81,6 +85,9 @@ public class AuthController {
 
         // Pre-create progress tracking data
         progressService.getOrCreateProgress(savedUser);
+
+        // Seed comprehensive computer science notes
+        noteSeederService.seedNotesForUser(savedUser);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

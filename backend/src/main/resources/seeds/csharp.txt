@@ -1,0 +1,48 @@
+C# Programming & .NET Core
+========================================
+
+1. C# AND THE .NET ARCHITECTURE
+----------------------------------------
+C# is a type-safe, object-oriented language developed by Microsoft that runs on the Common Language Infrastructure (CLI).
+- Core Components of .NET:
+  * CLR (Common Language Runtime): The execution engine that compiles C# Intermediate Language (IL) bytecode into native machine code at runtime via JIT. Handles memory, thread execution, and security.
+  * CTS (Common Type System): Defines how types are declared and used in .NET, ensuring language interoperability.
+  * FCL (Framework Class Library): A standard library of classes, interfaces, and value types.
+- .NET Core vs .NET Framework: .NET Framework was Windows-only. .NET Core (and modern .NET 5/6/7+) is open-source, modular, and cross-platform (running on Windows, Linux, macOS).
+
+2. OBJECT-ORIENTED PROGRAMMING IN C#
+----------------------------------------
+- Value Types vs. Reference Types:
+  * Value Types: Store data directly. Allocated on the Stack. E.g., int, float, double, bool, char, structs, enums.
+  * Reference Types: Store a reference to the data. Allocated on the Heap. E.g., string, object, classes, interfaces, arrays, delegates.
+- Structs vs. Classes: Structs are value types (cannot inherit, stack allocated). Classes are reference types (support inheritance, heap allocated).
+- Properties: Syntactic sugar combining fields and accessor methods: `public int Age { get; set; }`
+
+3. MEMORY MANAGEMENT AND GARBAGE COLLECTION
+----------------------------------------
+- Garbage Collector (GC): Automatic memory manager that runs on the heap. Uses a generational algorithm (Generations 0, 1, and 2):
+  * Gen 0: Short-lived objects (temporary variables). Collected most frequently.
+  * Gen 1: Buffer generation. Objects that survived Gen 0.
+  * Gen 2: Long-lived objects. Collected least frequently.
+- Resource Disposal: For unmanaged resources (database connections, file handles). Classes implement the `IDisposable` interface.
+  * `using` statement: Syntactic sugar for try-finally blocks that calls `Dispose()` automatically: `using (var reader = new StreamReader(path)) { ... }`
+
+4. DELEGATES, EVENTS, AND LAMBDAS
+----------------------------------------
+- Delegates: Type-safe function pointers that define a method signature.
+  * Custom Delegates: `delegate void MyDelegate(string msg);`
+  * Built-in: `Action<T>` (returns void), `Func<T, TResult>` (returns a value), `Predicate<T>` (returns bool).
+- Events: Publisher-subscriber mechanism based on multicast delegates.
+- Lambda Expressions: `Func<int, int, int> add = (x, y) => x + y;`
+
+5. LINQ (LANGUAGE INTEGRATED QUERY)
+----------------------------------------
+A uniform query syntax for retrieving data from various sources (Collections, Databases, XML).
+- Query Syntax: `var query = from s in students where s.Age > 18 select s;`
+- Method Syntax: `var query = students.Where(s => s.Age > 18);`
+- Deferred Execution: Queries are not executed when defined, only when iterated over (e.g., in a `foreach` loop or calling `.ToList()`).
+
+6. ASYNCHRONOUS PROGRAMMING
+----------------------------------------
+- Async/Await: Standard model for asynchronous programming. Improves responsiveness and scalability.
+- Task Parallel Library (TPL): Uses `Task` and `Task<T>` to represent asynchronous operations, running non-blocking operations on thread pool threads.

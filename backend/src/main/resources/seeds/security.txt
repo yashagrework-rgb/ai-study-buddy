@@ -1,0 +1,49 @@
+Cryptography & Cyber Security
+========================================
+
+1. CYBER SECURITY FOUNDATIONS
+----------------------------------------
+Cyber security is the practice of protecting systems, networks, and programs from digital attacks.
+- CIA Triad:
+  * Confidentiality: Ensuring data is accessible only to authorized users (encryption).
+  * Integrity: Guaranteeing data remains unmodified and authentic (hashing, digital signatures).
+  * Availability: Ensuring resources are accessible when needed (redundancy, DDoS protection).
+
+2. CRYPTOGRAPHIC ALGORITHMS
+----------------------------------------
+- Symmetric Cryptography: Same key used for encryption and decryption. Fast.
+  * Algorithms: AES (Advanced Encryption Standard - industry standard block cipher, 128/256 bits), DES/3DES (deprecated).
+- Asymmetric (Public Key) Cryptography: Uses a key pair: Public Key (encrypts, shared openly) and Private Key (decrypts, kept secret).
+  * Algorithms: RSA (based on prime factorization difficulty), Diffie-Hellman (protocol for secure key exchange over public channels), ECC (Elliptic Curve Cryptography - offers same security as RSA with smaller key sizes).
+- Hash Functions: One-way mathematical functions converting arbitrary input into a fixed-length string. Collision resistant.
+  * Algorithms: SHA-256, MD5/SHA-1 (deprecated due to collisions).
+  * HMAC: Hash-based Message Authentication Code using a secret key to guarantee message integrity and authenticity.
+
+3. WEB SECURITY AND CYBER THREATS
+----------------------------------------
+- Malware: Malicious software (Viruses, Worms, Trojans, Ransomware, Spyware).
+- Phishing: Social engineering attacks tricking users into revealing sensitive credentials.
+- DDoS (Distributed Denial of Service): Flooding servers with traffic from botnets to cause downtime.
+- OWASP Top 10 Web Vulnerabilities:
+  * SQL Injection (SQLi): Injecting malicious SQL commands into input fields, executing unauthorized database queries. Prevented by Parameterized Queries (Prepared Statements).
+  * Cross-Site Scripting (XSS): Injecting malicious scripts into websites executed by victim browsers. Stored, Reflected, or DOM-based XSS. Prevented by escaping/sanitizing inputs.
+  * CSRF (Cross-Site Request Forgery): Tricks victim browser into making unauthorized actions on a logged-in site. Prevented by CSRF tokens.
+  * Broken Authentication: Weak password rules or session hijacking. Prevented by MFA and secure tokens.
+
+4. NETWORK SECURITY PROTOCOLS
+----------------------------------------
+- Firewalls: Monitor and filter network traffic based on security rules. Packet-filtering, stateful inspection, or application gateway.
+- VPN (Virtual Private Network): Encrypted tunnel over public networks.
+- SSL/TLS Handshake: Secures HTTP connections (HTTPS).
+  1. Client Hello (supported cipher suites, version).
+  2. Server Hello (chosen cipher, SSL Certificate containing Server's Public Key).
+  3. Client verifies certificate with Certificate Authority (CA).
+  4. Client generates pre-master secret, encrypts with Server's Public Key, sends to Server.
+  5. Server decrypts pre-master secret using Private Key.
+  6. Both generate session symmetric keys for encrypted communication.
+
+5. SECURE DEVELOPMENT AND AUTHENTICATION
+----------------------------------------
+- OAuth 2.0: Delegation protocol allowing third-party apps to access API resources on behalf of user (using Access Tokens).
+- JWT (JSON Web Token): Stateless authentication token. Contains Header (alg, type), Payload (claims, user details), and Signature.
+- Cryptographic Salt: Adding random data to passwords before hashing to prevent rainbow table attacks.

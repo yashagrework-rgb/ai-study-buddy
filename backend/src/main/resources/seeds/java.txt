@@ -1,0 +1,66 @@
+Java Programming Core Guide
+========================================
+
+1. JAVA VIRTUAL MACHINE (JVM) ARCHITECTURE
+----------------------------------------
+The JVM is the engine that drives the Java code. It converts Java bytecode into machine language.
+- Class Loader Subsystem: Handles dynamic class loading. It performs three main functions: Loading (Bootstrap, Extension, and Application class loaders), Linking (Verify, Prepare, Resolve), and Initialization.
+- JVM Memory Areas:
+  * Method Area: Stores class-level data, including static variables, method code, and constant pool. Shared across all threads.
+  * Heap Area: Stores all objects and instance variables. Created at JVM startup and shared across all threads. Divided into Young Generation (Eden, S1, S2) and Old/Tenured Generation for Garbage Collection optimization.
+  * Stack Area: Every thread has a private stack. Stores local variables, method execution frames, and partial results.
+  * PC Registers: Keeps track of the address of the currently executing JVM instruction for each thread.
+  * Native Method Stack: Stores native method information.
+- Execution Engine:
+  * Interpreter: Reads bytecode instructions and executes them. Slow if executing repetitive code.
+  * Just-In-Time (JIT) Compiler: Compiles frequently executed bytecode (hotspots) into native machine code to increase execution speed.
+  * Garbage Collector (GC): Automatically reclaims heap memory by destroying unreferenced objects. Uses algorithms like Mark-Sweep, Copying, and G1 (Garbage First).
+
+2. OBJECT-ORIENTED PROGRAMMING (OOP) IN JAVA
+----------------------------------------
+- Abstraction: Hiding implementation details and showing only functionality. Achieved using abstract classes and interfaces.
+- Encapsulation: Binding data (variables) and code (methods) together into a single unit. Achieved by making variables private and providing public getters and setters.
+- Inheritance: Code reusability mechanism where a subclass inherits properties and behavior from a superclass. Java supports single, multilevel, and hierarchical inheritance, but not multiple inheritance using classes (to avoid the Diamond Problem). Multiple inheritance is achieved via interfaces.
+- Polymorphism:
+  * Compile-time (Static) Polymorphism: Method Overloading (same method name, different parameters).
+  * Runtime (Dynamic) Polymorphism: Method Overriding (subclass provides a specific implementation of a method declared in parent class). Resolved at runtime using dynamic binding.
+
+3. EXCEPTIONS & EXCEPTION HANDLING
+----------------------------------------
+- Hierarchy: The root class is Throwable, which has two main subclasses: Error (fatal system errors like OutOfMemoryError) and Exception (application-level exceptions).
+- Checked vs. Unchecked:
+  * Checked Exceptions: Checked at compile-time. Subclasses of Exception (excluding RuntimeException), e.g., IOException, SQLException. Must be handled using try-catch or declared with 'throws'.
+  * Unchecked Exceptions: Checked at runtime. Subclasses of RuntimeException, e.g., NullPointerException, ArithmeticException, ArrayIndexOutOfBoundsException.
+- Keywords: try, catch, finally (always executes), throw (explicitly throw an exception), throws (declare exceptions in method signature).
+- Try-With-Resources: Introduced in Java 7. Automatically closes resources implementing AutoCloseable (e.g., BufferedReader, Connection). Prevents resource leaks.
+
+4. MULTITHREADING AND CONCURRENCY
+----------------------------------------
+- Thread Creation: Extending Thread class or implementing Runnable / Callable (Callable returns a value and throws checked exceptions).
+- Lifecycle States: New, Runnable, Blocked, Waiting, Timed Waiting, Terminated.
+- Synchronization: Prevents thread interference and memory consistency errors. The 'synchronized' keyword locks objects or classes.
+- Locks API: ReentrantLock provides finer control, tryLock(), and interruptible lock acquisitions.
+- Executor Service: Part of java.util.concurrent. Manages a pool of threads (ThreadPoolExecutor). Avoids the overhead of manually spawning threads.
+
+5. COLLECTIONS FRAMEWORK
+----------------------------------------
+- Collection Interface hierarchy: List, Set, Queue. Map is a separate hierarchy.
+- List Interface: Ordered, duplicates allowed.
+  * ArrayList: Resizable array. O(1) access. O(n) insert/remove in middle.
+  * LinkedList: Doubly-linked list. O(n) access. O(1) insertion/deletion at pointers.
+- Set Interface: Unordered, no duplicates.
+  * HashSet: Uses HashMap. O(1) operations.
+  * TreeSet: Red-Black tree. O(log n) operations. Sorted order.
+  * LinkedHashSet: Maintains insertion order.
+- Map Interface: Key-value pairs.
+  * HashMap: Hashing mechanism. Uses buckets (LinkedList/Red-Black tree) to handle collisions. O(1) average operations.
+  * TreeMap: Sorted keys. Red-Black tree. O(log n).
+  * ConcurrentHashMap: Thread-safe Map using lock striping (locks only segments/buckets instead of full table).
+
+6. JAVA 8+ FEATURES
+----------------------------------------
+- Lambda Expressions: Enables functional programming. Treats functionality as a method argument.
+- Functional Interfaces: Interface with exactly one abstract method (e.g., Runnable, Consumer, Supplier, Predicate, Function). Annotated with @FunctionalInterface.
+- Stream API: Performs functional-style operations on sequences of elements (filter, map, reduce, collect). Enables parallel execution easily.
+- Optional Class: Container object which may or may not contain a non-null value. Prevents NullPointerExceptions.
+- Default & Static Methods: Allows interfaces to have method implementations without breaking existing implementing classes.

@@ -1,0 +1,68 @@
+Computer Organization & Architecture
+========================================
+
+1. BASIC COMPUTER COMPONENTS AND BUS STRUCTURE
+----------------------------------------
+Computer architecture defines the functional behavior of a computer system, while computer organization describes how these specifications are implemented.
+- CPU (Central Processing Unit): Contains ALU (Arithmetic Logic Unit), CU (Control Unit), and Registers.
+- System Bus: Commmunication channels between CPU, Memory, and I/O.
+  * Data Bus: Carries data. Bidirectional.
+  * Address Bus: Carries memory address pointers. Unidirectional.
+  * Control Bus: Carries control signals (read, write, interrupts).
+- Von Neumann Architecture: Shared memory for program instructions and data. Harvard Architecture has separate instruction and data memories.
+
+2. INSTRUCTION CYCLE AND ADDRESSING MODES
+----------------------------------------
+- Instruction Cycle: Fetch (reads instruction from memory via Program Counter) -> Decode (Control Unit decodes instruction) -> Execute (ALU executes operation) -> Writeback (results saved to registers/memory).
+- Addressing Modes (How operands are located):
+  * Immediate: Value is part of instruction.
+  * Direct (Absolute): Instruction contains operand's memory address.
+  * Indirect: Instruction contains address pointing to operand's address.
+  * Register Direct / Indirect: Operands are in registers or register points to memory.
+  * Displacement / Indexing: Adds offset base addresses.
+
+3. INSTRUCTION SET ARCHITECTURES: RISC VS CISC
+----------------------------------------
+- RISC (Reduced Instruction Set Computer):
+  * Simple, single-cycle instructions.
+  * Hardwired control unit.
+  * Load/Store architecture (memory operations restricted to load/store).
+  * Highly pipelined.
+- CISC (Complex Instruction Set Computer):
+  * Complex, multi-cycle instructions.
+  * Microprogrammed control unit.
+  * Direct memory access within execution commands.
+  * Fewer registers, higher code density.
+
+4. COMPUTER ARITHMETIC
+----------------------------------------
+- Integer Representation: Signed magnitude, 1's complement, 2's complement.
+- Arithmetic Operations:
+  * Booth's Multiplication Algorithm: Multiplies signed binary numbers by checking adjacent bits, reducing additions/subtractions.
+  * Division: Restoring and non-restoring division algorithms.
+- Floating-Point Arithmetic: IEEE 754 standard (sign bit, exponent, mantissa/significand). Single precision (32-bit) and Double precision (64-bit).
+
+5. MEMORY HIERARCHY
+----------------------------------------
+Designed to balance speed, capacity, and cost. Registers (fastest, smallest) -> Cache -> Main Memory (RAM) -> Secondary Storage (slowest, largest).
+- Cache Memory: Small, high-speed SRAM.
+  * Cache Mapping:
+    - Direct Mapping: Memory block maps to a single cache line. High cache collision rate.
+    - Fully Associative Mapping: Block can map to any cache line. Flexible but requires expensive hardware searches.
+    - Set-Associative Mapping: Hybrid. Cache divided into sets. Block maps to a specific set, but can go to any line inside that set (e.g., 2-way, 4-way).
+  * Cache Writes: Write-Through vs. Write-Back.
+- Virtual Memory: OS maps physical RAM to disk paging blocks.
+
+6. INPUT/OUTPUT ORGANIZATION
+----------------------------------------
+- Programmed I/O: CPU polls status flags on devices. CPU is busy-waiting.
+- Interrupt-Driven I/O: Device sends an interrupt signal when ready. CPU suspends current task, executes Interrupt Service Routine (ISR).
+- DMA (Direct Memory Access): DMA controller handles block data transfers directly between memory and I/O devices, bypassing CPU. CPU is freed up for other work.
+
+7. PIPELINING
+----------------------------------------
+Overlap execution of multiple instructions to improve throughput.
+- Pipeline Hazards (Causes stalls):
+  * Structural Hazard: Hardware conflict (e.g., memory port accessed by fetch and writeback at the same time).
+  * Data Hazard: Instruction depends on results of a previous instruction still in the pipeline (RAW, WAR, WAW). Resolved by Forwarding/Bypassing or stalls.
+  * Control Hazard: Branch instructions change the PC. Resolved by Branch Prediction.

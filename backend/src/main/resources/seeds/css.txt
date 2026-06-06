@@ -1,0 +1,66 @@
+CSS3 Styling, Flexbox, & Grid
+========================================
+
+1. CSS SELECTORS AND THE BOX MODEL
+----------------------------------------
+Cascading Style Sheets (CSS) describe how HTML elements are displayed on screen.
+- Selector Types:
+  * Element Selector: `p { ... }`
+  * Class Selector: `.my-class { ... }`
+  * ID Selector: `#my-id { ... }`
+  * Attribute Selector: `[type="text"] { ... }`
+  * Pseudo-classes: `:hover`, `:focus`, `:nth-child(even)`.
+  * Pseudo-elements: `::before`, `::after` (insert content virtual elements).
+- Box Model (Inside Out):
+  * Content: The text or image itself.
+  * Padding: Clear space around content. Inside border.
+  * Border: Line around padding.
+  * Margin: Clear space outside border.
+  * `box-sizing: border-box;`: Sets width/height to include padding and borders, avoiding layout scaling issues.
+
+2. SPECIFICITY AND CASCADE
+----------------------------------------
+Rules determining which styles apply if conflicts exist.
+- Specificity Score: Inline styles (1000) > IDs (100) > Classes/Pseudo-classes/Attributes (10) > Elements/Pseudo-elements (1) > Universal (*, 0).
+- `!important` overrides specificity checks. Should be used sparingly.
+
+3. POSITIONING SCHEMES
+----------------------------------------
+- `static`: Default. Rendered in normal document flow.
+- `relative`: Rendered in normal flow, then offset relative to its original position without affecting surrounding elements.
+- `absolute`: Removed from normal flow. Positioned relative to its closest parent with positioning (not static), otherwise relative to `html`.
+- `fixed`: Positioned relative to the viewport window. Stays in place during scroll.
+- `sticky`: Hybrid. Toggles between relative and fixed depending on scroll position.
+
+4. CSS FLEXBOX (1D LAYOUTS)
+----------------------------------------
+Designed for layouts in a single dimension (either row or column).
+- Container properties:
+  * `display: flex;`
+  * `flex-direction`: `row` | `column`.
+  * `justify-content` (aligns along main axis): `flex-start` | `flex-end` | `center` | `space-between` | `space-around` | `space-evenly`.
+  * `align-items` (aligns along cross axis): `stretch` | `flex-start` | `flex-end` | `center`.
+  * `flex-wrap`: `nowrap` | `wrap`.
+- Item properties: `flex-grow`, `flex-shrink`, `flex-basis`, `align-self`.
+
+5. CSS GRID (2D LAYOUTS)
+----------------------------------------
+Designed for grid layouts with rows and columns.
+- Container properties:
+  * `display: grid;`
+  * `grid-template-columns`: Defines columns, e.g., `repeat(3, 1fr)` or `200px 1fr`.
+  * `grid-template-rows`: Defines rows.
+  * `gap`: Space between grid items.
+  * `grid-template-areas`: Visual layout mapping using named grids.
+- Item properties: `grid-column`, `grid-row`, `grid-area`.
+
+6. RESPONSIVE DESIGN & MODERN CSS
+----------------------------------------
+- Media Queries: Apply styles based on viewport conditions.
+  * Syntax: `@media (max-width: 768px) { ... }`
+- Relative Units: `em` (relative to parent font-size), `rem` (relative to root html font-size), `vw` (1% of viewport width), `vh` (1% of viewport height).
+- Transitions & Animations:
+  * Transitions: Smooth property changes: `transition: background 0.3s ease;`
+  * Keyframes: Complex animations:
+    - `@keyframes slide { 0% { left: 0; } 100% { left: 100px; } }`
+    - `animation: slide 2s infinite;`
