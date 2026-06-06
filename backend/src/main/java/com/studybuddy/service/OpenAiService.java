@@ -63,8 +63,8 @@ public class OpenAiService {
             throw new RuntimeException("Empty response from OpenAI API");
 
         } catch (Exception e) {
-            logger.error("Error communicating with OpenAI API: {}", e.getMessage());
-            return "ChatGPT Error: Unable to reach OpenAI API. Details: " + e.getMessage();
+            logger.error("Error communicating with OpenAI API: {}. Falling back to offline mock response.", e.getMessage());
+            return getMockResponse(prompt);
         }
     }
 
@@ -123,5 +123,54 @@ public class OpenAiService {
             cleaned = cleaned.replaceAll("```$", "");
         }
         return cleaned.trim();
+    }
+
+    private String getMockResponse(String prompt) {
+        if (prompt.contains("JSON array")) {
+            return "[\n" +
+                    "  {\n" +
+                    "    \"question\": \"What is the capital of France?\",\n" +
+                    "    \"options\": [\"London\", \"Berlin\", \"Paris\", \"Madrid\"],\n" +
+                    "    \"answer\": \"Paris\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"question\": \"Which programming language is commonly used for Spring Boot?\",\n" +
+                    "    \"options\": [\"Python\", \"Java\", \"C++\", \"JavaScript\"],\n" +
+                    "    \"answer\": \"Java\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"question\": \"What does JWT stand for?\",\n" +
+                    "    \"options\": [\"Java Web Token\", \"JSON Web Token\", \"Joint Web Tech\", \"JPA Web Transaction\"],\n" +
+                    "    \"answer\": \"JSON Web Token\"\n" +
+                    "  }\n" +
+                    "]";
+        } else if (prompt.contains("Summarize")) {
+            return "### Note Summary (ChatGPT Offline)\n\n" +
+                    "* **Introduction:** This is a placeholder summary since the OpenAI API key was not supplied or active.\n" +
+                    "* **Core Concepts:**\n" +
+                    "  1. *Backend Services:* Built with Java Spring Boot.\n" +
+                    "  2. *Security:* Configured with stateless JWT tokens.\n" +
+                    "  3. *AI Integration:* OpenAI GPT models.\n" +
+                    "* **Key Takeaway:** Configure `OPENAI_API_KEY` in environment variables or settings to enable live summaries!";
+        } else if (prompt.contains("study plan")) {
+            return "### 7-Day Study Plan (ChatGPT Offline)\n\n" +
+                    "* **Day 1: Setup & Initialization**\n" +
+                    "  * Focus on Spring Boot backend models and frontend boilerplate.\n" +
+                    "* **Day 2: Authentication flow**\n" +
+                    "  * Connect register/login endpoints to frontend forms.\n" +
+                    "* **Day 3: Database & Notes CRUD**\n" +
+                    "  * Verify PostgreSQL tables and write the file uploading system.\n" +
+                    "* **Day 4: AI & Quiz Generation**\n" +
+                    "  * Connect backend REST controllers with the OpenAI Service.\n" +
+                    "* **Day 5: Progress Charts**\n" +
+                    "  * Build charts to display scores and study times on Dashboard.\n" +
+                    "* **Day 6: Complete End-to-End Testing**\n" +
+                    "  * Run through quiz, note CRUD, and security filters.\n" +
+                    "* **Day 7: Deployment Ready**\n" +
+                    "  * Deploy frontend to Vercel and backend to Render.";
+        } else {
+            return "Hello from AI Study Buddy! I am currently running in offline mock mode. " +
+                    "Please configure a valid `OPENAI_API_KEY` to chat live about your note contents.";
+        }
     }
 }

@@ -77,8 +77,8 @@ public class GeminiService {
             throw new RuntimeException("Empty response from Gemini API");
 
         } catch (Exception e) {
-            logger.error("Error communicating with Gemini API: {}", e.getMessage());
-            return "AI Buddy Error: Unable to reach Gemini API. Details: " + e.getMessage() + ". Defaulting to offline mode.";
+            logger.error("Error communicating with Gemini API: {}. Falling back to offline mock response.", e.getMessage());
+            return getMockResponse(prompt);
         }
     }
 
