@@ -27,6 +27,9 @@ public class User {
     @Column(name = "gemini_api_key")
     private String geminiApiKey;
 
+    @Column(name = "open_ai_api_key")
+    private String openAiApiKey;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -34,13 +37,14 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(Long id, String name, String email, String password, String role, String geminiApiKey, LocalDateTime createdAt) {
+    public User(Long id, String name, String email, String password, String role, String geminiApiKey, String openAiApiKey, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
         this.geminiApiKey = geminiApiKey;
+        this.openAiApiKey = openAiApiKey;
         this.createdAt = createdAt;
     }
 
@@ -56,6 +60,7 @@ public class User {
         private String password;
         private String role;
         private String geminiApiKey;
+        private String openAiApiKey;
         private LocalDateTime createdAt;
 
         public UserBuilder id(Long id) { this.id = id; return this; }
@@ -64,10 +69,11 @@ public class User {
         public UserBuilder password(String password) { this.password = password; return this; }
         public UserBuilder role(String role) { this.role = role; return this; }
         public UserBuilder geminiApiKey(String geminiApiKey) { this.geminiApiKey = geminiApiKey; return this; }
+        public UserBuilder openAiApiKey(String openAiApiKey) { this.openAiApiKey = openAiApiKey; return this; }
         public UserBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
 
         public User build() {
-            return new User(id, name, email, password, role, geminiApiKey, createdAt);
+            return new User(id, name, email, password, role, geminiApiKey, openAiApiKey, createdAt);
         }
     }
 
@@ -84,6 +90,8 @@ public class User {
     public void setRole(String role) { this.role = role; }
     public String getGeminiApiKey() { return geminiApiKey; }
     public void setGeminiApiKey(String geminiApiKey) { this.geminiApiKey = geminiApiKey; }
+    public String getOpenAiApiKey() { return openAiApiKey; }
+    public void setOpenAiApiKey(String openAiApiKey) { this.openAiApiKey = openAiApiKey; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

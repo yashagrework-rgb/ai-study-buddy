@@ -16,37 +16,73 @@ export default function ProfilePage({ user }) {
   const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  const [apiKey, setApiKey] = useState('');
-  const [savedKey, setSavedKey] = useState(localStorage.getItem('gemini_api_key') || '');
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [geminiKey, setGeminiKey] = useState('');
+  const [savedGeminiKey, setSavedGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [geminiSuccessMsg, setGeminiSuccessMsg] = useState('');
+  const [geminiErrorMsg, setGeminiErrorMsg] = useState('');
+  
+  const [openAiKey, setOpenAiKey] = useState('');
+  const [savedOpenAiKey, setSavedOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
+  const [openAiSuccessMsg, setOpenAiSuccessMsg] = useState('');
+  const [openAiErrorMsg, setOpenAiErrorMsg] = useState('');
 
-  const handleSaveKey = async () => {
-    if (!apiKey.trim()) {
-      setErrorMsg('Please enter a valid API key.');
+  const handleSaveGeminiKey = async () => {
+    if (!geminiKey.trim()) {
+      setGeminiErrorMsg('Please enter a valid Gemini API key.');
       return;
     }
-    localStorage.setItem('gemini_api_key', apiKey.trim());
-    setSavedKey(apiKey.trim());
-    setSuccessMsg('Gemini API key saved successfully!');
-    setErrorMsg('');
+    localStorage.setItem('gemini_api_key', geminiKey.trim());
+    setSavedGeminiKey(geminiKey.trim());
+    setGeminiSuccessMsg('Gemini API key saved successfully!');
+    setGeminiErrorMsg('');
     try {
-      await api.put('/api/ai/api-key', { apiKey: apiKey.trim() });
+      await api.put('/api/ai/api-key', { geminiApiKey: geminiKey.trim() });
     } catch (dbErr) {
-      console.error('Failed to sync API key to database:', dbErr);
+      console.error('Failed to sync Gemini API key to database:', dbErr);
+      setGeminiErrorMsg('Failed to sync Gemini API key to database.');
     }
   };
 
-  const handleClearKey = async () => {
+  const handleClearGeminiKey = async () => {
     localStorage.removeItem('gemini_api_key');
-    setApiKey('');
-    setSavedKey('');
-    setSuccessMsg('Gemini API key cleared.');
-    setErrorMsg('');
+    setGeminiKey('');
+    setSavedGeminiKey('');
+    setGeminiSuccessMsg('Gemini API key cleared.');
+    setGeminiErrorMsg('');
     try {
-      await api.put('/api/ai/api-key', { apiKey: null });
+      await api.put('/api/ai/api-key', { geminiApiKey: null });
     } catch (dbErr) {
-      console.error('Failed to clear API key in database:', dbErr);
+      console.error('Failed to clear Gemini API key in database:', dbErr);
+    }
+  };
+
+  const handleSaveOpenAiKey = async () => {
+    if (!openAiKey.trim()) {
+      setOpenAiErrorMsg('Please enter a valid OpenAI API key.');
+      return;
+    }
+    localStorage.setItem('openai_api_key', openAiKey.trim());
+    setSavedOpenAiKey(openAiKey.trim());
+    setOpenAiSuccessMsg('OpenAI API key saved successfully!');
+    setOpenAiErrorMsg('');
+    try {
+      await api.put('/api/ai/api-key', { openAiApiKey: openAiKey.trim() });
+    } catch (dbErr) {
+      console.error('Failed to sync OpenAI API key to database:', dbErr);
+      setOpenAiErrorMsg('Failed to sync OpenAI API key to database.');
+    }
+  };
+
+  const handleClearOpenAiKey = async () => {
+    localStorage.removeItem('openai_api_key');
+    setOpenAiKey('');
+    setSavedOpenAiKey('');
+    setOpenAiSuccessMsg('OpenAI API key cleared.');
+    setOpenAiErrorMsg('');
+    try {
+      await api.put('/api/ai/api-key', { openAiApiKey: null });
+    } catch (dbErr) {
+      console.error('Failed to clear OpenAI API key in database:', dbErr);
     }
   };
 
@@ -154,42 +190,49 @@ export default function ProfilePage({ user }) {
         </div>
       </div>
 
-      {/* Gemini API Key Configuration Section */}
-      <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-4 relative overflow-hidden shadow-glass bg-white/[0.02]">
+      {/* AI Co-pilot Configuration Section */}
+      <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-6 relative overflow-hidden shadow-glass bg-white/[0.02]">
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary-400" />
           AI Co-pilot Configuration
         </h3>
         <p className="text-xs text-slate-400">
-          Configure a personal Google Gemini API key to activate real, detailed, human-like answers for study lounge chats, notes summarization, dynamic MCQ quizzes, and 7-day study plans.
+          Configure personal API keys to activate real, detailed, human-like answers for study lounge chats, notes summarization, dynamic MCQ quizzes, and 7-day study plans.
         </p>
 
-        <div className="space-y-3">
+        {/* Gemini Panel */}
+        <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-bold text-white">Google Gemini API</h4>
+            <span className="text-[10px] text-slate-500">
+              Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">Google AI Studio</a>
+            </span>
+          </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="password"
-              value={apiKey}
+              value={geminiKey}
               onChange={(e) => {
-                setApiKey(e.target.value);
-                setSuccessMsg('');
-                setErrorMsg('');
+                setGeminiKey(e.target.value);
+                setGeminiSuccessMsg('');
+                setGeminiErrorMsg('');
               }}
-              placeholder={savedKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
+              placeholder={savedGeminiKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
               className="flex-1 glass-input text-xs py-2 px-3 bg-black/20 border border-white/10"
             />
             
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={handleSaveKey}
+                onClick={handleSaveGeminiKey}
                 className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all"
               >
                 Save Key
               </button>
-              {savedKey && (
+              {savedGeminiKey && (
                 <button
                   type="button"
-                  onClick={handleClearKey}
+                  onClick={handleClearGeminiKey}
                   className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
                 >
                   Clear
@@ -197,18 +240,57 @@ export default function ProfilePage({ user }) {
               )}
             </div>
           </div>
-          
-          {successMsg && (
-            <p className="text-xs text-emerald-400 font-semibold">{successMsg}</p>
-          )}
-          {errorMsg && (
-            <p className="text-xs text-rose-400 font-semibold">{errorMsg}</p>
-          )}
-          
-          <p className="text-[10px] text-slate-500">
-            Get your free API key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">Google AI Studio</a>. Keys are stored safely in browser storage.
-          </p>
+          {geminiSuccessMsg && <p className="text-xs text-emerald-400 font-semibold">{geminiSuccessMsg}</p>}
+          {geminiErrorMsg && <p className="text-xs text-rose-400 font-semibold">{geminiErrorMsg}</p>}
         </div>
+
+        {/* OpenAI Panel */}
+        <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-bold text-white">OpenAI ChatGPT API</h4>
+            <span className="text-[10px] text-slate-500">
+              Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">OpenAI API Keys</a>
+            </span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="password"
+              value={openAiKey}
+              onChange={(e) => {
+                setOpenAiKey(e.target.value);
+                setOpenAiSuccessMsg('');
+                setOpenAiErrorMsg('');
+              }}
+              placeholder={savedOpenAiKey ? "••••••••••••••••••••••••••••••••" : "Enter OpenAI API Key (sk-...)"}
+              className="flex-1 glass-input text-xs py-2 px-3 bg-black/20 border border-white/10"
+            />
+            
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleSaveOpenAiKey}
+                className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all"
+              >
+                Save Key
+              </button>
+              {savedOpenAiKey && (
+                <button
+                  type="button"
+                  onClick={handleClearOpenAiKey}
+                  className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+          {openAiSuccessMsg && <p className="text-xs text-emerald-400 font-semibold">{openAiSuccessMsg}</p>}
+          {openAiErrorMsg && <p className="text-xs text-rose-400 font-semibold">{openAiErrorMsg}</p>}
+        </div>
+
+        <p className="text-[10px] text-slate-500">
+          Keys are stored safely in browser storage and synchronized to your account database.
+        </p>
       </div>
 
       {/* Profile Logout CTA */}

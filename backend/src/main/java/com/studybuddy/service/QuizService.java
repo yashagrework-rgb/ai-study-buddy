@@ -27,9 +27,12 @@ public class QuizService {
     private GeminiService geminiService;
 
     @Autowired
+    private OpenAiService openAiService;
+
+    @Autowired
     private ProgressService progressService;
 
-    public Quiz generateQuiz(@NonNull User user, @NonNull QuizRequest quizRequest, String customApiKey) {
+    public Quiz generateQuiz(@NonNull User user, @NonNull QuizRequest quizRequest, String provider, String customGeminiKey, String customOpenAiKey) {
         String contentSource = "";
         String quizTitle = "General Knowledge Quiz";
 
@@ -51,8 +54,15 @@ public class QuizService {
 
         int count = quizRequest.getQuestionCount() != null ? quizRequest.getQuestionCount() : 5;
 
-        // Generate MCQ questions using Gemini API
-        String questionsJson = geminiService.generateQuiz(contentSource, count, customApiKey);
+        // Generate MCQ questions using either OpenAI or Gemini API
+        String questionsJson;
+        if ("openai".equalsIgnoreCase(provider)) {
+            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : user.getOpenAiApiKey();
+            questionsJson = openAiService.generateQuiz(contentSource, count, keyToUse);
+        } else {
+            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : user.getGeminiApiKey();
+            questionsJson = geminiService.generateQuiz(contentSource, count, keyToUse);
+        }
 
         // Save generated quiz
         Quiz quiz = Quiz.builder()

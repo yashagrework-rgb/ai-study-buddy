@@ -37,128 +37,87 @@ export default function ChatPage() {
   const [error, setError] = useState('');
   
   const [showSettings, setShowSettings] = useState(false);
-  const [savedApiKey, setSavedApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
-  const [tempApiKey, setTempApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [aiProvider, setAiProvider] = useState(localStorage.getItem('ai_provider') || 'gemini');
+  const [savedGeminiKey, setSavedGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [tempGeminiKey, setTempGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [savedOpenAiKey, setSavedOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
+  const [tempOpenAiKey, setTempOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
   const [testingKey, setTestingKey] = useState(false);
   const [apiKeySuccess, setApiKeySuccess] = useState('');
   const [apiKeyError, setApiKeyError] = useState('');
 
-  const handleTestConnection = async () => {
-    if (!tempApiKey.trim()) {
-      setApiKeyError('Please enter a key to test.');
+  const handleSwitchProvider = (newProvider) => {
+    localStorage.setItem('ai_provider', newProvider);
+    setAiProvider(newProvider);
+    setApiKeySuccess('');
+    setApiKeyError('');
+  };
+
+  const handleSaveGeminiKey = async () => {
+    if (!tempGeminiKey.trim()) {
+      setApiKeyError('Please enter a Gemini API key.');
       return;
     }
     setTestingKey(true);
     setApiKeySuccess('');
     setApiKeyError('');
     try {
-      // Step 1: List models available to this key
-      const listUrl = `/gemini-api/v1/models?key=${tempApiKey}`;
-      const listRes = await axios.get(listUrl);
-      const models = listRes.data?.models || [];
-      
-      if (models.length === 0) {
-        throw new Error('No models found associated with this API key.');
-      }
-      
-      // Step 2: Collect all models supporting generateContent in order of preference
-      const preferredModels = [
-        'models/gemini-1.5-flash',
-        'models/gemini-2.0-flash',
-        'models/gemini-1.5-flash-latest',
-        'models/gemini-2.5-flash'
-      ];
-      
-      let matchedModels = [];
-      for (const pref of preferredModels) {
-        const found = models.find(m => m.name === pref && m.supportedGenerationMethods?.includes('generateContent'));
-        if (found) {
-          matchedModels.push(pref);
-        }
-      }
-      
-      // Append any other generateContent models not in preference list
-      for (const m of models) {
-        if (m.supportedGenerationMethods?.includes('generateContent') && !matchedModels.includes(m.name)) {
-          matchedModels.push(m.name);
-        }
-      }
-      
-      if (matchedModels.length === 0) {
-        throw new Error('No model supporting content generation was found for this key.');
-      }
-      
-      // Step 3: Test models sequentially until one succeeds (e.g. skips quota limits of 0)
-      let selectedModel = '';
-      let lastTestError = '';
-      
-      for (const modelName of matchedModels) {
-        try {
-          const testUrl = `/gemini-api/v1/${modelName}:generateContent?key=${tempApiKey}`;
-          const payload = {
-            contents: [{ parts: [{ text: "Respond with exactly OK" }] }]
-          };
-          const testRes = await axios.post(testUrl, payload, { headers: { 'Content-Type': 'application/json' } });
-          const text = testRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (text) {
-            selectedModel = modelName;
-            break; // Succeeded! Stop trying other models.
-          }
-        } catch (modelErr) {
-          console.warn(`Model ${modelName} test failed:`, modelErr);
-          lastTestError = modelErr.response?.data?.error?.message || modelErr.message || 'Validation error';
-        }
-      }
-      
-      if (selectedModel) {
-        const shortName = selectedModel.replace('models/', '');
-        setApiKeySuccess(`API Key verified successfully! Using model: ${shortName}`);
-        localStorage.setItem('gemini_api_key', tempApiKey);
-        localStorage.setItem('gemini_model', selectedModel);
-        setSavedApiKey(tempApiKey);
-        try {
-          await api.put('/api/ai/api-key', { apiKey: tempApiKey });
-        } catch (dbErr) {
-          console.error('Failed to sync API key to database:', dbErr);
-        }
-      } else {
-        throw new Error(`All available models failed validation. Last error: ${lastTestError}`);
-      }
+      localStorage.setItem('gemini_api_key', tempGeminiKey.trim());
+      localStorage.setItem('gemini_model', 'models/gemini-2.0-flash-lite');
+      setSavedGeminiKey(tempGeminiKey.trim());
+      setApiKeySuccess('Gemini API key saved successfully!');
+      await api.put('/api/ai/api-key', { geminiApiKey: tempGeminiKey.trim() });
     } catch (err) {
       console.error(err);
-      const errMsg = err.response?.data?.error?.message || err.message || 'Invalid API key or network error';
-      
-      if (errMsg.includes('429') || errMsg.includes('quota') || errMsg.includes('Quota') || errMsg.includes('limit')) {
-        setApiKeySuccess('API Key saved (Key is propagating, please wait a few minutes before use).');
-        setApiKeyError('');
-        localStorage.setItem('gemini_api_key', tempApiKey);
-        localStorage.setItem('gemini_model', 'models/gemini-2.0-flash-lite');
-        setSavedApiKey(tempApiKey);
-        try {
-          await api.put('/api/ai/api-key', { apiKey: tempApiKey });
-        } catch (dbErr) {
-          console.error('Failed to sync API key to database:', dbErr);
-        }
-      } else {
-        setApiKeyError(`Error: ${errMsg}`);
-      }
+      setApiKeyError('Failed to save Gemini key in database.');
     } finally {
       setTestingKey(false);
     }
   };
 
-  const handleClearKey = async () => {
-    localStorage.removeItem('gemini_api_key');
-    localStorage.removeItem('gemini_model');
-    setSavedApiKey('');
-    setTempApiKey('');
-    setApiKeySuccess('API Key cleared successfully.');
+  const handleSaveOpenAiKey = async () => {
+    if (!tempOpenAiKey.trim()) {
+      setApiKeyError('Please enter an OpenAI API key.');
+      return;
+    }
+    setTestingKey(true);
+    setApiKeySuccess('');
     setApiKeyError('');
     try {
-      await api.put('/api/ai/api-key', { apiKey: null });
+      localStorage.setItem('openai_api_key', tempOpenAiKey.trim());
+      setSavedOpenAiKey(tempOpenAiKey.trim());
+      setApiKeySuccess('OpenAI API key saved successfully!');
+      await api.put('/api/ai/api-key', { openAiApiKey: tempOpenAiKey.trim() });
+    } catch (err) {
+      console.error(err);
+      setApiKeyError('Failed to save OpenAI key in database.');
+    } finally {
+      setTestingKey(false);
+    }
+  };
+
+  const handleClearGeminiKey = async () => {
+    localStorage.removeItem('gemini_api_key');
+    localStorage.removeItem('gemini_model');
+    setSavedGeminiKey('');
+    setTempGeminiKey('');
+    setApiKeySuccess('Gemini API key cleared successfully.');
+    try {
+      await api.put('/api/ai/api-key', { geminiApiKey: null });
     } catch (dbErr) {
-      console.error('Failed to clear API key in database:', dbErr);
+      console.error('Failed to clear Gemini key in database:', dbErr);
+    }
+  };
+
+  const handleClearOpenAiKey = async () => {
+    localStorage.removeItem('openai_api_key');
+    setSavedOpenAiKey('');
+    setTempOpenAiKey('');
+    setApiKeySuccess('OpenAI API key cleared successfully.');
+    try {
+      await api.put('/api/ai/api-key', { openAiApiKey: null });
+    } catch (dbErr) {
+      console.error('Failed to clear OpenAI key in database:', dbErr);
     }
   };
 
@@ -367,14 +326,16 @@ export default function ChatPage() {
             type="button"
             onClick={() => setShowSettings(!showSettings)}
             className={`px-3.5 py-2 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold ${
-              savedApiKey 
+              (aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' 
                 : 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20'
             }`}
-            title="Configure Gemini API Key"
+            title="Configure AI API Keys"
           >
             <Zap className="h-3.5 w-3.5 animate-pulse" />
-            {savedApiKey ? 'Gemini Live' : 'AI Offline'}
+            {(aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
+              ? `${aiProvider === 'openai' ? 'OpenAI' : 'Gemini'} Live` 
+              : 'AI Offline'}
           </button>
 
         </div>
@@ -382,53 +343,113 @@ export default function ChatPage() {
       </div>
 
       {showSettings && (
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 mb-4 space-y-3 bg-white/[0.02] shadow-lg animate-fade-in">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
-              <Settings className="h-4 w-4 text-primary-400 animate-spin-slow" />
-              Google Gemini Co-pilot Config
-            </h3>
+        <div className="glass-panel p-4 rounded-2xl border border-white/5 mb-4 space-y-4 bg-white/[0.02] shadow-lg animate-fade-in">
+          {/* Provider Selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-300 font-semibold">Active AI Provider:</span>
+              <select
+                value={aiProvider}
+                onChange={(e) => handleSwitchProvider(e.target.value)}
+                className="glass-input py-1 px-3 text-xs w-48 bg-black/20 focus:ring-0 focus:border-white/20"
+              >
+                <option value="gemini">Google Gemini</option>
+                <option value="openai">OpenAI ChatGPT</option>
+              </select>
+            </div>
             <span className="text-[10px] text-slate-400 font-medium">
-              Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">Google AI Studio</a>
+              {aiProvider === 'openai' ? (
+                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">OpenAI API Keys</a></>
+              ) : (
+                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">Google AI Studio</a></>
+              )}
             </span>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <input
-                type="password"
-                value={tempApiKey}
-                onChange={(e) => {
-                  setTempApiKey(e.target.value);
-                  setApiKeySuccess('');
-                  setApiKeyError('');
-                }}
-                placeholder="Enter Gemini API Key (AIzaSy...)"
-                className="w-full glass-input text-xs py-2 px-3 bg-black/20"
-              />
+
+          {/* Key Configuration Inputs */}
+          {aiProvider === 'openai' ? (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Settings className="h-4 w-4 text-primary-400 animate-spin-slow" />
+                OpenAI ChatGPT Co-pilot Config
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="password"
+                    value={tempOpenAiKey}
+                    onChange={(e) => {
+                      setTempOpenAiKey(e.target.value);
+                      setApiKeySuccess('');
+                      setApiKeyError('');
+                    }}
+                    placeholder={savedOpenAiKey ? "••••••••••••••••••••••••••••••••" : "Enter OpenAI API Key (sk-...)"}
+                    className="w-full glass-input text-xs py-2 px-3 bg-black/20"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveOpenAiKey}
+                    disabled={testingKey}
+                    className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
+                  >
+                    {testingKey ? 'Verifying...' : 'Save Key'}
+                  </button>
+                  {savedOpenAiKey && (
+                    <button
+                      type="button"
+                      onClick={handleClearOpenAiKey}
+                      className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                    >
+                      Clear Key
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-            
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleTestConnection}
-                disabled={testingKey}
-                className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
-              >
-                {testingKey ? 'Verifying...' : 'Verify & Save'}
-              </button>
-              
-              {savedApiKey && (
-                <button
-                  type="button"
-                  onClick={handleClearKey}
-                  className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
-                >
-                  Clear Key
-                </button>
-              )}
+          ) : (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Settings className="h-4 w-4 text-primary-400 animate-spin-slow" />
+                Google Gemini Co-pilot Config
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="password"
+                    value={tempGeminiKey}
+                    onChange={(e) => {
+                      setTempGeminiKey(e.target.value);
+                      setApiKeySuccess('');
+                      setApiKeyError('');
+                    }}
+                    placeholder={savedGeminiKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
+                    className="w-full glass-input text-xs py-2 px-3 bg-black/20"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveGeminiKey}
+                    disabled={testingKey}
+                    className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
+                  >
+                    {testingKey ? 'Verifying...' : 'Save Key'}
+                  </button>
+                  {savedGeminiKey && (
+                    <button
+                      type="button"
+                      onClick={handleClearGeminiKey}
+                      className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                    >
+                      Clear Key
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
           
           {apiKeySuccess && (
             <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
@@ -442,7 +463,7 @@ export default function ChatPage() {
           )}
           
           <p className="text-[10px] text-slate-500">
-            Your key resides in browser memory and queries the Google API directly. It is never exposed or logged.
+            Your key resides in browser memory and queries the API directly. It is never exposed or logged.
           </p>
         </div>
       )}

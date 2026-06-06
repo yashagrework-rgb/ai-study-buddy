@@ -63,6 +63,7 @@ public class AuthController {
         }
 
         String userApiKey = (user != null) ? user.getGeminiApiKey() : null;
+        String openAiKey = (user != null) ? user.getOpenAiApiKey() : null;
 
         return ResponseEntity.ok(new JwtResponse(
                 jwt,
@@ -70,7 +71,8 @@ public class AuthController {
                 userDetails.getName(),
                 userDetails.getEmail(),
                 role,
-                userApiKey
+                userApiKey,
+                openAiKey
         ));
     }
 

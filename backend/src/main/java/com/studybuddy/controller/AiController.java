@@ -6,6 +6,7 @@ import com.studybuddy.model.User;
 import com.studybuddy.repository.UserRepository;
 import com.studybuddy.security.UserDetailsImpl;
 import com.studybuddy.service.GeminiService;
+import com.studybuddy.service.OpenAiService;
 import com.studybuddy.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ public class AiController {
     private GeminiService geminiService;
 
     @Autowired
+    private OpenAiService openAiService;
+
+    @Autowired
     private NoteService noteService;
 
     @Autowired
@@ -39,7 +43,9 @@ public class AiController {
 
     @PostMapping("/chat")
     public ResponseEntity<ChatResponse> chat(
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customApiKey,
+            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
+            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
+            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
             @RequestBody ChatRequest chatRequest) {
         User currentUser = getCurrentUser();
         String context = "";
@@ -54,13 +60,21 @@ public class AiController {
             context = chatRequest.getContent();
         }
 
-        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : currentUser.getGeminiApiKey();
-
         String reply;
-        if (!context.isEmpty()) {
-            reply = geminiService.askAboutNote(context, chatRequest.getMessage(), keyToUse);
+        if ("openai".equalsIgnoreCase(provider)) {
+            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
+            if (!context.isEmpty()) {
+                reply = openAiService.askAboutNote(context, chatRequest.getMessage(), keyToUse);
+            } else {
+                reply = openAiService.generateContent(chatRequest.getMessage(), keyToUse);
+            }
         } else {
-            reply = geminiService.generateContent(chatRequest.getMessage(), keyToUse);
+            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
+            if (!context.isEmpty()) {
+                reply = geminiService.askAboutNote(context, chatRequest.getMessage(), keyToUse);
+            } else {
+                reply = geminiService.generateContent(chatRequest.getMessage(), keyToUse);
+            }
         }
 
         return ResponseEntity.ok(new ChatResponse(reply));
@@ -68,7 +82,9 @@ public class AiController {
 
     @PostMapping("/summarize")
     public ResponseEntity<ChatResponse> summarize(
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customApiKey,
+            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
+            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
+            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
             @RequestBody SummaryRequest summaryRequest) {
         User currentUser = getCurrentUser();
         String contentToSummarize = "";
@@ -87,15 +103,23 @@ public class AiController {
             return ResponseEntity.badRequest().body(new ChatResponse("Error: No content available to summarize"));
         }
 
-        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : currentUser.getGeminiApiKey();
+        String summary;
+        if ("openai".equalsIgnoreCase(provider)) {
+            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
+            summary = openAiService.generateSummary(contentToSummarize, keyToUse);
+        } else {
+            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
+            summary = geminiService.generateSummary(contentToSummarize, keyToUse);
+        }
 
-        String summary = geminiService.generateSummary(contentToSummarize, keyToUse);
         return ResponseEntity.ok(new ChatResponse(summary));
     }
 
     @PostMapping("/study-plan")
     public ResponseEntity<ChatResponse> generateStudyPlan(
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customApiKey,
+            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
+            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
+            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
             @RequestBody StudyPlanRequest studyPlanRequest) {
         User currentUser = getCurrentUser();
         String contentSource = "";
@@ -115,18 +139,32 @@ public class AiController {
         }
 
         int days = studyPlanRequest.getDurationDays() != null ? studyPlanRequest.getDurationDays() : 7;
-        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : currentUser.getGeminiApiKey();
+        String studyPlan;
+        if ("openai".equalsIgnoreCase(provider)) {
+            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
+            studyPlan = openAiService.generateStudyPlan(contentSource, days, keyToUse);
+        } else {
+            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
+            studyPlan = geminiService.generateStudyPlan(contentSource, days, keyToUse);
+        }
 
-        String studyPlan = geminiService.generateStudyPlan(contentSource, days, keyToUse);
         return ResponseEntity.ok(new ChatResponse(studyPlan));
     }
 
     @PutMapping("/api-key")
     public ResponseEntity<?> updateApiKey(@RequestBody java.util.Map<String, String> payload) {
         User currentUser = getCurrentUser();
-        String apiKey = payload.get("apiKey");
-        currentUser.setGeminiApiKey(apiKey);
+        if (payload.containsKey("geminiApiKey")) {
+            currentUser.setGeminiApiKey(payload.get("geminiApiKey"));
+        }
+        if (payload.containsKey("openAiApiKey")) {
+            currentUser.setOpenAiApiKey(payload.get("openAiApiKey"));
+        }
+        // Backward compatibility for old calls
+        if (payload.containsKey("apiKey")) {
+            currentUser.setGeminiApiKey(payload.get("apiKey"));
+        }
         userRepository.save(currentUser);
-        return ResponseEntity.ok(new MessageResponse("API Key updated successfully"));
+        return ResponseEntity.ok(new MessageResponse("API Keys updated successfully"));
     }
 }

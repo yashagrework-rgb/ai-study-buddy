@@ -173,6 +173,11 @@ export default function App() {
     } else {
       localStorage.removeItem('gemini_api_key');
     }
+    if (userData.openAiApiKey) {
+      localStorage.setItem('openai_api_key', userData.openAiApiKey);
+    } else {
+      localStorage.removeItem('openai_api_key');
+    }
     setUser(userData);
   };
 
@@ -180,6 +185,8 @@ export default function App() {
     localStorage.removeItem('user');
     localStorage.removeItem('gemini_api_key');
     localStorage.removeItem('gemini_model');
+    localStorage.removeItem('openai_api_key');
+    localStorage.removeItem('ai_provider');
     setUser(null);
     window.location.href = '/login';
   };

@@ -33,6 +33,16 @@ if (!USE_LOCAL_MOCK) {
       if (geminiKey && geminiKey.trim() !== '') {
         config.headers['X-Gemini-API-Key'] = geminiKey;
       }
+
+      // Inject user's custom OpenAI API key into headers for the backend to use
+      const openAiKey = localStorage.getItem('openai_api_key');
+      if (openAiKey && openAiKey.trim() !== '') {
+        config.headers['X-OpenAI-API-Key'] = openAiKey;
+      }
+
+      // Inject active AI provider
+      const provider = localStorage.getItem('ai_provider') || 'gemini';
+      config.headers['X-Ai-Provider'] = provider;
       return config;
     },
     (error) => Promise.reject(error)

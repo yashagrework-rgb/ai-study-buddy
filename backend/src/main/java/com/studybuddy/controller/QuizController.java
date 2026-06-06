@@ -36,10 +36,18 @@ public class QuizController {
 
     @PostMapping("/generate")
     public ResponseEntity<?> generateQuiz(
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customApiKey,
+            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
+            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
+            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
             @RequestBody QuizRequest quizRequest) {
         User currentUser = getCurrentUser();
-        Quiz quiz = quizService.generateQuiz(Objects.requireNonNull(currentUser, "currentUser"), Objects.requireNonNull(quizRequest, "quizRequest"), customApiKey);
+        Quiz quiz = quizService.generateQuiz(
+                Objects.requireNonNull(currentUser, "currentUser"), 
+                Objects.requireNonNull(quizRequest, "quizRequest"), 
+                provider, 
+                customGeminiKey, 
+                customOpenAiKey
+        );
         return ResponseEntity.ok(quiz);
     }
 

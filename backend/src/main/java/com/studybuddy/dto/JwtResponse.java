@@ -8,16 +8,18 @@ public class JwtResponse {
     private String email;
     private String role;
     private String geminiApiKey;
+    private String openAiApiKey;
 
     public JwtResponse() {}
 
-    public JwtResponse(String token, Long id, String name, String email, String role, String geminiApiKey) {
+    public JwtResponse(String token, Long id, String name, String email, String role, String geminiApiKey, String openAiApiKey) {
         this.token = token;
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
         this.geminiApiKey = geminiApiKey;
+        this.openAiApiKey = openAiApiKey;
     }
 
     public String getToken() { return token; }
@@ -33,4 +35,6 @@ public class JwtResponse {
     public void setRole(String role) { this.role = role; }
     public String getGeminiApiKey() { return geminiApiKey; }
     public void setGeminiApiKey(String geminiApiKey) { this.geminiApiKey = geminiApiKey; }
+    public String getOpenAiApiKey() { return openAiApiKey; }
+    public void setOpenAiApiKey(String openAiApiKey) { this.openAiApiKey = openAiApiKey; }
 }
