@@ -6,6 +6,7 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,10 +25,16 @@ public class OllamaService {
 
         try {
             logger.info("Connecting to Ollama at {} using model {}", urlToUse, modelToUse);
+            
+            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+            requestFactory.setConnectTimeout(30000);  // 30 second connection timeout
+            requestFactory.setReadTimeout(120000);    // 120 second read timeout for AI generation
+            
             org.springframework.web.client.RestClient.Builder restClientBuilder = 
                 org.springframework.web.client.RestClient.builder()
                     .defaultHeader("Bypass-Tunnel-Reminder", "true")
-                    .defaultHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                    .defaultHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                    .requestFactory(requestFactory);
 
             OllamaApi ollamaApi = OllamaApi.builder()
                     .baseUrl(urlToUse.trim())

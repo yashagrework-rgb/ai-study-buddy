@@ -65,7 +65,7 @@ public class QuizService {
         }
 
         if (!isValidJson) {
-            questionsJson = getDefaultMockQuestions(contentSource, count);
+            questionsJson = LocalAiFallback.getMockQuestionsForSubject(contentSource, count);
         }
 
         // Save generated quiz
@@ -103,106 +103,5 @@ public class QuizService {
         return quizRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    private String getDefaultMockQuestions(String contentSource, int count) {
-        String contentLower = contentSource.toLowerCase();
-        String mockQuestionsJson;
-        
-        if (contentLower.contains("java") || contentLower.contains("jvm")) {
-            mockQuestionsJson = "[\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which component of the JVM executes class bytecodes and manages optimization via JIT compiler?\",\n" +
-                    "    \"options\": [\"Class Loader\", \"Execution Engine\", \"Garbage Collector\", \"Method Area\"],\n" +
-                    "    \"answer\": \"Execution Engine\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"In Java OOP, which keyword is used to inherit a class?\",\n" +
-                    "    \"options\": [\"implements\", \"inherits\", \"extends\", \"super\"],\n" +
-                    "    \"answer\": \"extends\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which of the following Java Collection interfaces allows storing key-value pairs?\",\n" +
-                    "    \"options\": [\"List\", \"Set\", \"Queue\", \"Map\"],\n" +
-                    "    \"answer\": \"Map\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which of these is a Checked Exception in Java (evaluated at compile time)?\",\n" +
-                    "    \"options\": [\"NullPointerException\", \"ArithmeticException\", \"IOException\", \"ArrayIndexOutOfBoundsException\"],\n" +
-                    "    \"answer\": \"IOException\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Where in JVM memory are Java objects dynamically allocated?\",\n" +
-                    "    \"options\": [\"JVM Stack\", \"Heap Memory\", \"Method Area\", \"PC Registers\"],\n" +
-                    "    \"answer\": \"Heap Memory\"\n" +
-                    "  }\n" +
-                    "]";
-        } else if (contentLower.contains("python") || contentLower.contains("gil")) {
-            mockQuestionsJson = "[\n" +
-                    "  {\n" +
-                    "    \"question\": \"What is the name of the lock in Python that prevents multiple native threads from executing bytecode concurrently?\",\n" +
-                    "    \"options\": [\"Global Interpreter Lock (GIL)\", \"Global Thread Lock\", \"Interpreter Mutex\", \"Process Locking Manager\"],\n" +
-                    "    \"answer\": \"Global Interpreter Lock (GIL)\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which Python data structure is immutable and declared using parentheses?\",\n" +
-                    "    \"options\": [\"List\", \"Dictionary\", \"Tuple\", \"Set\"],\n" +
-                    "    \"answer\": \"Tuple\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which keyword is used in Python to return a value from a generator function lazily?\",\n" +
-                    "    \"options\": [\"return\", \"yield\", \"send\", \"generate\"],\n" +
-                    "    \"answer\": \"yield\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which framework is a popular asynchronous web framework in the Python ecosystem?\",\n" +
-                    "    \"options\": [\"Django\", \"Flask\", \"FastAPI\", \"React\"],\n" +
-                    "    \"answer\": \"FastAPI\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"How is memory management handled for unreferenced variables in Python?\",\n" +
-                    "    \"options\": [\"Manual deallocation\", \"Garbage Collection & Reference Counting\", \"JVM Cleaner\", \"Pointers free()\"],\n" +
-                    "    \"answer\": \"Garbage Collection & Reference Counting\"\n" +
-                    "  }\n" +
-                    "]";
-        } else {
-            mockQuestionsJson = "[\n" +
-                    "  {\n" +
-                    "    \"question\": \"What is the primary language used to build a Spring Boot backend?\",\n" +
-                    "    \"options\": [\"Python\", \"Java\", \"C++\", \"JavaScript\"],\n" +
-                    "    \"answer\": \"Java\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which protocol is standard for secure client-server API requests?\",\n" +
-                    "    \"options\": [\"FTP\", \"SMTP\", \"HTTPS\", \"DHCP\"],\n" +
-                    "    \"answer\": \"HTTPS\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"What does JWT stand for in modern authentication stacks?\",\n" +
-                    "    \"options\": [\"Java Web Token\", \"JSON Web Token\", \"Joint Web Technology\", \"JPA Web Transaction\"],\n" +
-                    "    \"answer\": \"JSON Web Token\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"In a Relational Database, which key uniquely identifies a row?\",\n" +
-                    "    \"options\": [\"Foreign Key\", \"Primary Key\", \"Candidate Key\", \"Super Key\"],\n" +
-                    "    \"answer\": \"Primary Key\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"question\": \"Which structure operates on a Last In First Out (LIFO) basis?\",\n" +
-                    "    \"options\": [\"Queue\", \"Stack\", \"Linked List\", \"Tree\"],\n" +
-                    "    \"answer\": \"Stack\"\n" +
-                    "  }\n" +
-                    "]";
-        }
-        
-        // Parse and limit count if necessary
-        try {
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            List<?> list = mapper.readValue(mockQuestionsJson, List.class);
-            if (list.size() > count) {
-                list = list.subList(0, count);
-            }
-            return mapper.writeValueAsString(list);
-        } catch (Exception e) {
-            return mockQuestionsJson;
-        }
-    }
 }
+
