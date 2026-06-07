@@ -30,7 +30,19 @@ export default function ChatPage() {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingSeconds, setLoadingSeconds] = useState(0);
   const [error, setError] = useState('');
+  const loadingTimerRef = useRef(null);
+
+  const startLoadingTimer = () => {
+    setLoadingSeconds(0);
+    if (loadingTimerRef.current) clearInterval(loadingTimerRef.current);
+    loadingTimerRef.current = setInterval(() => setLoadingSeconds(s => s + 1), 1000);
+  };
+  const stopLoadingTimer = () => {
+    if (loadingTimerRef.current) clearInterval(loadingTimerRef.current);
+    setLoadingSeconds(0);
+  };
   
 
 
@@ -66,6 +78,7 @@ export default function ChatPage() {
     // Add user message to state
     setMessages(prev => [...prev, { sender: 'user', text: userText }]);
     setLoading(true);
+    startLoadingTimer();
 
     try {
       const payload = {
@@ -81,6 +94,7 @@ export default function ChatPage() {
       setMessages(prev => [...prev, { sender: 'bot', text: "Sorry, I encountered an error. Please verify that your backend and local Ollama instance are running and reachable." }]);
     } finally {
       setLoading(false);
+      stopLoadingTimer();
     }
   };
 
@@ -93,6 +107,7 @@ export default function ChatPage() {
     setError('');
     setMessages(prev => [...prev, { sender: 'user', text: "Summarize this study guide for me." }]);
     setLoading(true);
+    startLoadingTimer();
 
     try {
       const response = await api.post('/api/ai/summarize', {
@@ -104,6 +119,7 @@ export default function ChatPage() {
       setError('Failed to generate summary.');
     } finally {
       setLoading(false);
+      stopLoadingTimer();
     }
   };
 
@@ -116,6 +132,7 @@ export default function ChatPage() {
     setError('');
     setMessages(prev => [...prev, { sender: 'user', text: "Build a 7-day study plan from this material." }]);
     setLoading(true);
+    startLoadingTimer();
 
     try {
       const response = await api.post('/api/ai/study-plan', {
@@ -128,6 +145,7 @@ export default function ChatPage() {
       setError('Failed to generate study plan.');
     } finally {
       setLoading(false);
+      stopLoadingTimer();
     }
   };
 
@@ -280,16 +298,21 @@ export default function ChatPage() {
           );
         })}
 
-        {/* AI Typing Indicator */}
         {loading && (
           <div className="flex items-start gap-3.5">
             <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 dark:bg-slate-850 dark:border-slate-700 dark:text-slate-200 flex items-center justify-center font-bold text-xs flex-shrink-0">
               <Bot className="h-4 w-4" />
             </div>
-            <div className="bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 p-4 rounded-xl flex items-center gap-1.5 shadow-sm">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce"></div>
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.15s' }}></div>
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+            <div className="bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 p-4 rounded-xl flex flex-col gap-1 shadow-sm">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.15s' }}></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-1">AI thinking... ({loadingSeconds}s)</span>
+              </div>
+              {loadingSeconds > 10 && (
+                <span className="text-[10px] text-slate-400 dark:text-slate-500">Ollama is generating, please wait...</span>
+              )}
             </div>
           </div>
         )}
