@@ -26,6 +26,14 @@ export default function ProfilePage({ user }) {
   const [openAiSuccessMsg, setOpenAiSuccessMsg] = useState('');
   const [openAiErrorMsg, setOpenAiErrorMsg] = useState('');
 
+  // Ollama configurations
+  const [ollamaUrl, setOllamaUrl] = useState(localStorage.getItem('ollama_url') || 'http://localhost:11434');
+  const [savedOllamaUrl, setSavedOllamaUrl] = useState(localStorage.getItem('ollama_url') || 'http://localhost:11434');
+  const [ollamaModel, setOllamaModel] = useState(localStorage.getItem('ollama_model') || 'llama3');
+  const [savedOllamaModel, setSavedOllamaModel] = useState(localStorage.getItem('ollama_model') || 'llama3');
+  const [ollamaSuccessMsg, setOllamaSuccessMsg] = useState('');
+  const [ollamaErrorMsg, setOllamaErrorMsg] = useState('');
+
   const handleSaveGeminiKey = async () => {
     if (!geminiKey.trim()) {
       setGeminiErrorMsg('Please enter a valid Gemini API key.');
@@ -84,6 +92,34 @@ export default function ProfilePage({ user }) {
     } catch (dbErr) {
       console.error('Failed to clear OpenAI API key in database:', dbErr);
     }
+  };
+
+  const handleSaveOllamaSettings = () => {
+    if (!ollamaUrl.trim()) {
+      setOllamaErrorMsg('Please enter a valid Ollama API base URL.');
+      return;
+    }
+    if (!ollamaModel.trim()) {
+      setOllamaErrorMsg('Please enter a valid Ollama model name.');
+      return;
+    }
+    localStorage.setItem('ollama_url', ollamaUrl.trim());
+    localStorage.setItem('ollama_model', ollamaModel.trim());
+    setSavedOllamaUrl(ollamaUrl.trim());
+    setSavedOllamaModel(ollamaModel.trim());
+    setOllamaSuccessMsg('Ollama settings saved successfully!');
+    setOllamaErrorMsg('');
+  };
+
+  const handleClearOllamaSettings = () => {
+    localStorage.removeItem('ollama_url');
+    localStorage.removeItem('ollama_model');
+    setOllamaUrl('http://localhost:11434');
+    setSavedOllamaUrl('http://localhost:11434');
+    setOllamaModel('llama3');
+    setSavedOllamaModel('llama3');
+    setOllamaSuccessMsg('Ollama settings reset to defaults.');
+    setOllamaErrorMsg('');
   };
 
   useEffect(() => {
@@ -279,6 +315,64 @@ export default function ProfilePage({ user }) {
           </div>
           {openAiSuccessMsg && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{openAiSuccessMsg}</p>}
           {openAiErrorMsg && <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{openAiErrorMsg}</p>}
+        </div>
+
+        {/* Ollama Panel */}
+        <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white">Local Ollama LLM</h4>
+            <span className="text-[10px] text-slate-450 dark:text-slate-500">
+              Requires <a href="https://ollama.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">Ollama</a> running locally
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold mb-1">Ollama API URL</label>
+              <input
+                type="text"
+                value={ollamaUrl}
+                onChange={(e) => {
+                  setOllamaUrl(e.target.value);
+                  setOllamaSuccessMsg('');
+                  setOllamaErrorMsg('');
+                }}
+                placeholder="http://localhost:11434"
+                className="w-full glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold mb-1">Ollama Model</label>
+              <input
+                type="text"
+                value={ollamaModel}
+                onChange={(e) => {
+                  setOllamaModel(e.target.value);
+                  setOllamaSuccessMsg('');
+                  setOllamaErrorMsg('');
+                }}
+                placeholder="llama3"
+                className="w-full glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 justify-end pt-1">
+            <button
+              type="button"
+              onClick={handleSaveOllamaSettings}
+              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-all shadow-sm"
+            >
+              Save Config
+            </button>
+            <button
+              type="button"
+              onClick={handleClearOllamaSettings}
+              className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
+            >
+              Reset Defaults
+            </button>
+          </div>
+          {ollamaSuccessMsg && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{ollamaSuccessMsg}</p>}
+          {ollamaErrorMsg && <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{ollamaErrorMsg}</p>}
         </div>
 
         <p className="text-[10px] text-slate-455 dark:text-slate-500">

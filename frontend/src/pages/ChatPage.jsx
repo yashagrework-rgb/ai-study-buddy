@@ -42,6 +42,13 @@ export default function ChatPage() {
   const [tempGeminiKey, setTempGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
   const [savedOpenAiKey, setSavedOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
   const [tempOpenAiKey, setTempOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
+
+  // Ollama configurations
+  const [savedOllamaUrl, setSavedOllamaUrl] = useState(localStorage.getItem('ollama_url') || 'http://localhost:11434');
+  const [tempOllamaUrl, setTempOllamaUrl] = useState(localStorage.getItem('ollama_url') || 'http://localhost:11434');
+  const [savedOllamaModel, setSavedOllamaModel] = useState(localStorage.getItem('ollama_model') || 'llama3');
+  const [tempOllamaModel, setTempOllamaModel] = useState(localStorage.getItem('ollama_model') || 'llama3');
+
   const [testingKey, setTestingKey] = useState(false);
   const [apiKeySuccess, setApiKeySuccess] = useState('');
   const [apiKeyError, setApiKeyError] = useState('');
@@ -96,6 +103,23 @@ export default function ChatPage() {
     }
   };
 
+  const handleSaveOllamaSettings = () => {
+    if (!tempOllamaUrl.trim()) {
+      setApiKeyError('Please enter an Ollama Server URL.');
+      return;
+    }
+    if (!tempOllamaModel.trim()) {
+      setApiKeyError('Please enter an Ollama Model name.');
+      return;
+    }
+    localStorage.setItem('ollama_url', tempOllamaUrl.trim());
+    localStorage.setItem('ollama_model', tempOllamaModel.trim());
+    setSavedOllamaUrl(tempOllamaUrl.trim());
+    setSavedOllamaModel(tempOllamaModel.trim());
+    setApiKeySuccess('Ollama configuration saved successfully!');
+    setApiKeyError('');
+  };
+
   const handleClearGeminiKey = async () => {
     localStorage.removeItem('gemini_api_key');
     localStorage.removeItem('gemini_model');
@@ -119,6 +143,17 @@ export default function ChatPage() {
     } catch (dbErr) {
       console.error('Failed to clear OpenAI key in database:', dbErr);
     }
+  };
+
+  const handleClearOllamaSettings = () => {
+    localStorage.removeItem('ollama_url');
+    localStorage.removeItem('ollama_model');
+    setSavedOllamaUrl('http://localhost:11434');
+    setTempOllamaUrl('http://localhost:11434');
+    setSavedOllamaModel('llama3');
+    setTempOllamaModel('llama3');
+    setApiKeySuccess('Ollama configuration reset to defaults.');
+    setApiKeyError('');
   };
 
   const chatEndRef = useRef(null);
@@ -326,15 +361,15 @@ export default function ChatPage() {
             type="button"
             onClick={() => setShowSettings(!showSettings)}
             className={`px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 text-xs font-bold ${
-              (aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
+              (aiProvider === 'openai' ? savedOpenAiKey : (aiProvider === 'ollama' ? true : savedGeminiKey)) 
                 ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100/50' 
                 : 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100/50'
             }`}
             title="Configure AI API Keys"
           >
             <Settings className="h-3.5 w-3.5" />
-            {(aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
-              ? `${aiProvider === 'openai' ? 'OpenAI' : 'Gemini'} Live` 
+            {(aiProvider === 'openai' ? savedOpenAiKey : (aiProvider === 'ollama' ? true : savedGeminiKey)) 
+              ? `${aiProvider === 'openai' ? 'OpenAI' : (aiProvider === 'ollama' ? 'Ollama' : 'Gemini')} Live` 
               : 'AI Keys Config'}
           </button>
 
@@ -355,13 +390,18 @@ export default function ChatPage() {
               >
                 <option value="gemini">Google Gemini</option>
                 <option value="openai">OpenAI ChatGPT</option>
+                <option value="ollama">Local Ollama</option>
               </select>
             </div>
             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-              {aiProvider === 'openai' ? (
-                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-80">OpenAI API Keys</a></>
-              ) : (
-                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-80">Google AI Studio</a></>
+              {aiProvider === 'openai' && (
+                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-85">OpenAI API Keys</a></>
+              )}
+              {aiProvider === 'gemini' && (
+                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">Google AI Studio</a></>
+              )}
+              {aiProvider === 'ollama' && (
+                <>Requires <a href="https://ollama.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">Ollama</a> running locally</>
               )}
             </span>
           </div>
@@ -405,6 +445,62 @@ export default function ChatPage() {
                     </button>
                   )}
                 </div>
+              </div>
+            </div>
+          ) : aiProvider === 'ollama' ? (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                Local Ollama Configuration
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
+                    Ollama API Base URL
+                  </label>
+                  <input
+                    type="text"
+                    value={tempOllamaUrl}
+                    onChange={(e) => {
+                      setTempOllamaUrl(e.target.value);
+                      setApiKeySuccess('');
+                      setApiKeyError('');
+                    }}
+                    placeholder="e.g. http://localhost:11434"
+                    className="w-full glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
+                    Ollama Model Name
+                  </label>
+                  <input
+                    type="text"
+                    value={tempOllamaModel}
+                    onChange={(e) => {
+                      setTempOllamaModel(e.target.value);
+                      setApiKeySuccess('');
+                      setApiKeyError('');
+                    }}
+                    placeholder="e.g. llama3, llama3.1, mistral"
+                    className="w-full glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end pt-1">
+                <button
+                  type="button"
+                  onClick={handleSaveOllamaSettings}
+                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-sm"
+                >
+                  Save Config
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClearOllamaSettings}
+                  className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
+                >
+                  Reset Defaults
+                </button>
               </div>
             </div>
           ) : (

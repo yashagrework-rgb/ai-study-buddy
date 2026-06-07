@@ -7,6 +7,7 @@ import com.studybuddy.repository.UserRepository;
 import com.studybuddy.security.UserDetailsImpl;
 import com.studybuddy.service.GeminiService;
 import com.studybuddy.service.OpenAiService;
+import com.studybuddy.service.OllamaService;
 import com.studybuddy.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class AiController {
     private OpenAiService openAiService;
 
     @Autowired
+    private OllamaService ollamaService;
+
+    @Autowired
     private NoteService noteService;
 
     @Autowired
@@ -46,6 +50,8 @@ public class AiController {
             @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
             @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
             @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
+            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
+            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
             @RequestBody ChatRequest chatRequest) {
         User currentUser = getCurrentUser();
         String context = "";
@@ -68,6 +74,12 @@ public class AiController {
             } else {
                 reply = openAiService.generateContent(chatRequest.getMessage(), keyToUse);
             }
+        } else if ("ollama".equalsIgnoreCase(provider)) {
+            if (!context.isEmpty()) {
+                reply = ollamaService.askAboutNote(context, chatRequest.getMessage(), customOllamaUrl, customOllamaModel);
+            } else {
+                reply = ollamaService.generateContent(chatRequest.getMessage(), customOllamaUrl, customOllamaModel);
+            }
         } else {
             String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
             if (!context.isEmpty()) {
@@ -85,6 +97,8 @@ public class AiController {
             @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
             @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
             @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
+            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
+            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
             @RequestBody SummaryRequest summaryRequest) {
         User currentUser = getCurrentUser();
         String contentToSummarize = "";
@@ -107,6 +121,8 @@ public class AiController {
         if ("openai".equalsIgnoreCase(provider)) {
             String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
             summary = openAiService.generateSummary(contentToSummarize, keyToUse);
+        } else if ("ollama".equalsIgnoreCase(provider)) {
+            summary = ollamaService.generateSummary(contentToSummarize, customOllamaUrl, customOllamaModel);
         } else {
             String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
             summary = geminiService.generateSummary(contentToSummarize, keyToUse);
@@ -120,6 +136,8 @@ public class AiController {
             @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
             @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
             @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
+            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
+            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
             @RequestBody StudyPlanRequest studyPlanRequest) {
         User currentUser = getCurrentUser();
         String contentSource = "";
@@ -143,6 +161,8 @@ public class AiController {
         if ("openai".equalsIgnoreCase(provider)) {
             String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
             studyPlan = openAiService.generateStudyPlan(contentSource, days, keyToUse);
+        } else if ("ollama".equalsIgnoreCase(provider)) {
+            studyPlan = ollamaService.generateStudyPlan(contentSource, days, customOllamaUrl, customOllamaModel);
         } else {
             String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
             studyPlan = geminiService.generateStudyPlan(contentSource, days, keyToUse);

@@ -40,6 +40,16 @@ if (!USE_LOCAL_MOCK) {
         config.headers['X-OpenAI-API-Key'] = openAiKey;
       }
 
+      // Inject user's custom Ollama configurations
+      const ollamaUrl = localStorage.getItem('ollama_url');
+      if (ollamaUrl && ollamaUrl.trim() !== '') {
+        config.headers['X-Ollama-URL'] = ollamaUrl;
+      }
+      const ollamaModel = localStorage.getItem('ollama_model');
+      if (ollamaModel && ollamaModel.trim() !== '') {
+        config.headers['X-Ollama-Model'] = ollamaModel;
+      }
+
       // Inject active AI provider
       const provider = localStorage.getItem('ai_provider') || 'gemini';
       config.headers['X-Ai-Provider'] = provider;
