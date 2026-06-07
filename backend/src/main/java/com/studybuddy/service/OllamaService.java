@@ -51,7 +51,8 @@ public class OllamaService {
                     .ollamaApi(ollamaApi)
                     .defaultOptions(OllamaChatOptions.builder()
                             .model(modelToUse.trim())
-                            .temperature(0.7)
+                            .temperature(0.4)
+                            .numPredict(2048)
                             .build())
                     .build();
 
@@ -84,27 +85,24 @@ public class OllamaService {
 
 
     public String generateQuiz(String noteContent, int questionCount, String customOllamaUrl, String customOllamaModel) {
-        String prompt = "You are a professional quiz maker. Generate a quiz of exactly " + questionCount + 
-                " multiple choice questions (MCQs) based on the following notes content. " +
-                "Your response must be a valid, raw JSON array of objects. Do not include markdown code block formatting (like ```json or ```). " +
-                "Each question object in the JSON array must follow this exact schema:\n" +
-                "{\n" +
-                "  \"question\": \"The question text\",\n" +
-                "  \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" +
-                "  \"answer\": \"The exact string value matching the correct option from the options array\"\n" +
-                "}\n\n" +
-                "Notes Content:\n" +
-                noteContent;
+        // Truncate content to keep prompt short for faster Ollama generation
+        String truncatedContent = noteContent.length() > 2000 ? noteContent.substring(0, 2000) + "..." : noteContent;
+        String prompt = "Generate exactly " + questionCount + " MCQ quiz questions from the notes below. " +
+                "Return ONLY a raw JSON array. No markdown. No explanation. Schema: " +
+                "[{\"question\":\"Q text\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"answer\":\"correct option\"}]\n\n" +
+                "Notes:\n" +
+                truncatedContent;
 
         String rawResult = generateContent(prompt, customOllamaUrl, customOllamaModel);
         return cleanJsonString(rawResult);
     }
 
     public String generateSummary(String noteContent, String customOllamaUrl, String customOllamaModel) {
-        String prompt = "Summarize the following notes content in a clear, structured format using markdown. " +
-                "Highlight key concepts, vocabulary, and takeaways. Keep it concise yet comprehensive.\n\n" +
-                "Notes Content:\n" +
-                noteContent;
+        // Truncate content for faster processing
+        String truncatedContent = noteContent.length() > 3000 ? noteContent.substring(0, 3000) + "..." : noteContent;
+        String prompt = "Summarize the following notes using markdown. List key concepts, vocab, and takeaways concisely.\n\n" +
+                "Notes:\n" +
+                truncatedContent;
 
         return generateContent(prompt, customOllamaUrl, customOllamaModel);
     }
