@@ -3,6 +3,7 @@ package com.studybuddy.service;
 import com.google.genai.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
@@ -17,35 +18,55 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
+    @Value("${spring.ai.google.genai.api-key:}")
+    private String springAiApiKey;
+
+    @Autowired(required = false)
+    private GoogleGenAiChatModel googleGenAiChatModel;
+
     public String generateContent(String prompt) {
-        return generateContent(prompt, null);
+        return generateContent(prompt, null, null);
     }
 
     public String generateContent(String prompt, String customApiKey) {
-        String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : apiKey;
-        if (keyToUse == null || keyToUse.trim().isEmpty() || keyToUse.equals("YOUR_GEMINI_KEY") || keyToUse.contains("dummy")) {
-            logger.warn("GEMINI_API_KEY is not configured or is placeholder. Returning mock response.");
-            return getMockResponse(prompt);
-        }
-
-        try {
-            Client client = Client.builder().apiKey(keyToUse).build();
-            GoogleGenAiChatModel chatModel = GoogleGenAiChatModel.builder()
-                    .genAiClient(client)
-                    .defaultOptions(GoogleGenAiChatOptions.builder()
-                            .model("gemini-2.0-flash-lite")
-                            .temperature(0.7)
-                            .build())
-                    .build();
-            
-            return chatModel.call(prompt);
-        } catch (Exception e) {
-            logger.error("Error communicating with Gemini API via Spring AI: {}. Falling back to offline mock response.", e.getMessage());
-            return getMockResponse(prompt);
-        }
+        return generateContent(prompt, customApiKey, null);
     }
 
-    public String generateQuiz(String noteContent, int questionCount, String customApiKey) {
+    public String generateContent(String prompt, String customApiKey, String noteTitle) {
+        // 1. Dynamic override key (if passed by client)
+        if (customApiKey != null && !customApiKey.trim().isEmpty() && !customApiKey.contains("dummy")) {
+            try {
+                Client client = Client.builder().apiKey(customApiKey.trim()).build();
+                GoogleGenAiChatModel chatModel = GoogleGenAiChatModel.builder()
+                        .genAiClient(client)
+                        .defaultOptions(GoogleGenAiChatOptions.builder()
+                                .model("gemini-2.0-flash-lite")
+                                .temperature(0.7)
+                                .build())
+                        .build();
+                return chatModel.call(prompt);
+            } catch (Exception e) {
+                logger.error("Error communicating with Gemini API via dynamic model: {}. Falling back to offline mock response.", e.getMessage());
+                return getMockResponse(prompt, noteTitle);
+            }
+        }
+
+        // 2. Global autowired model (if real key is configured in application.properties)
+        String serverKey = (apiKey != null && !apiKey.trim().isEmpty()) ? apiKey : springAiApiKey;
+        if (googleGenAiChatModel != null && serverKey != null && !serverKey.trim().isEmpty() && !serverKey.contains("dummy")) {
+            try {
+                return googleGenAiChatModel.call(prompt);
+            } catch (Exception e) {
+                logger.error("Error communicating with Gemini API via autowired model: {}. Falling back to offline mock response.", e.getMessage());
+                return getMockResponse(prompt, noteTitle);
+            }
+        }
+
+        logger.warn("Google Gemini API key is missing or placeholder. Returning offline mock response.");
+        return getMockResponse(prompt, noteTitle);
+    }
+
+    public String generateQuiz(String noteTitle, String noteContent, int questionCount, String customApiKey) {
         String prompt = "You are a professional quiz maker. Generate a quiz of exactly " + questionCount + 
                 " multiple choice questions (MCQs) based on the following notes content. " +
                 "Your response must be a valid, raw JSON array of objects. Do not include markdown code block formatting (like ```json or ```). " +
@@ -58,7 +79,7 @@ public class GeminiService {
                 "Notes Content:\n" +
                 noteContent;
 
-        String rawResult = generateContent(prompt, customApiKey);
+        String rawResult = generateContent(prompt, customApiKey, noteTitle);
         return cleanJsonString(rawResult);
     }
 
@@ -68,7 +89,7 @@ public class GeminiService {
                 "Notes Content:\n" +
                 noteContent;
 
-        return generateContent(prompt, customApiKey);
+        return generateContent(prompt, customApiKey, null);
     }
 
     public String generateStudyPlan(String topicOrContent, int durationDays, String customApiKey) {
@@ -78,7 +99,7 @@ public class GeminiService {
                 "Topic/Notes Content:\n" +
                 topicOrContent;
 
-        return generateContent(prompt, customApiKey);
+        return generateContent(prompt, customApiKey, null);
     }
 
     public String askAboutNote(String noteContent, String question, String customApiKey) {
@@ -89,22 +110,20 @@ public class GeminiService {
                 "User's Question:\n" +
                 question;
 
-        return generateContent(prompt, customApiKey);
+        return generateContent(prompt, customApiKey, null);
     }
 
     private String cleanJsonString(String rawJson) {
         if (rawJson == null) return "[]";
         String cleaned = rawJson.trim();
         if (cleaned.startsWith("```")) {
-            // Strip starting ```json or ```
             cleaned = cleaned.replaceAll("^```(json)?", "");
-            // Strip ending ```
             cleaned = cleaned.replaceAll("```$", "");
         }
         return cleaned.trim();
     }
 
-    private String getMockResponse(String prompt) {
+    private String getMockResponse(String prompt, String noteTitle) {
         String noteContent = "";
         if (prompt.contains("Notes Content:\n")) {
             noteContent = prompt.substring(prompt.indexOf("Notes Content:\n") + 15);
@@ -126,7 +145,7 @@ public class GeminiService {
                     count = Integer.parseInt(sub.trim());
                 } catch (Exception e) {}
             }
-            return LocalAiFallback.getMockQuestionsForSubject(noteContent, count);
+            return LocalAiFallback.getMockQuestionsForSubject(noteTitle, noteContent, count);
         } else if (prompt.contains("Summarize")) {
             return LocalAiFallback.generateLocalSummary(noteContent);
         } else if (prompt.contains("study plan")) {
