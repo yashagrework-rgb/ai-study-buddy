@@ -24,8 +24,14 @@ public class OllamaService {
 
         try {
             logger.info("Connecting to Ollama at {} using model {}", urlToUse, modelToUse);
+            org.springframework.web.client.RestClient.Builder restClientBuilder = 
+                org.springframework.web.client.RestClient.builder()
+                    .defaultHeader("Bypass-Tunnel-Reminder", "true")
+                    .defaultHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+
             OllamaApi ollamaApi = OllamaApi.builder()
                     .baseUrl(urlToUse.trim())
+                    .restClientBuilder(restClientBuilder)
                     .build();
 
             OllamaChatModel chatModel = OllamaChatModel.builder()

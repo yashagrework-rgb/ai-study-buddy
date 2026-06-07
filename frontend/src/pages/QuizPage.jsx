@@ -17,7 +17,7 @@ export default function QuizPage() {
 
   const [notes, setNotes] = useState([]);
   const [selectedNoteId, setSelectedNoteId] = useState('');
-  const [questionCount, setQuestionCount] = useState(5);
+  const [questionCount, setQuestionCount] = useState(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -345,7 +345,7 @@ export default function QuizPage() {
                 2. Number of MCQ Questions
               </label>
               <div className="grid grid-cols-2 gap-4">
-                {[5, 10].map(count => (
+                {[10, 25].map(count => (
                   <button
                     key={count}
                     type="button"

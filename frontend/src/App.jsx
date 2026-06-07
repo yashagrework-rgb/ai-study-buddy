@@ -54,7 +54,7 @@ const AppLayout = ({ children, user, onLogout, theme, setTheme }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Notes', href: '/notes', icon: BookOpen },
-    { name: 'AI Study Chat', href: '/chat', icon: MessageSquareCode },
+    { name: 'Summarise Notes', href: '/chat', icon: MessageSquareCode },
     { name: 'Generate Quiz', href: '/quiz', icon: BrainCircuit },
     { name: 'Quiz Results', href: '/results', icon: BarChart3 },
     { name: 'Profile', href: '/profile', icon: UserIcon },

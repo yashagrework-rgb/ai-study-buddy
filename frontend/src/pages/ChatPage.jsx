@@ -25,7 +25,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: "Hello! I am your AI Study Buddy. Select a study guide above to train me on your notes, or just ask any general study questions. I can explain complex terms, summarize material, or build study plans!"
+      text: "Hello! I am your AI Study Buddy. Select a study guide above to train me on your notes. I will generate a comprehensive summary, map out concepts, or create study schedules based on your material."
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
@@ -195,8 +195,8 @@ export default function ChatPage() {
             <Bot className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Study Chat Workspace</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Ask questions and review study guide context</p>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Summarise Notes Workspace</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Generate summaries, study plans, or ask questions about your notes</p>
           </div>
         </div>
 
