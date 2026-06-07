@@ -5,8 +5,6 @@ import com.studybuddy.model.Note;
 import com.studybuddy.model.User;
 import com.studybuddy.repository.UserRepository;
 import com.studybuddy.security.UserDetailsImpl;
-import com.studybuddy.service.GeminiService;
-import com.studybuddy.service.OpenAiService;
 import com.studybuddy.service.OllamaService;
 import com.studybuddy.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +20,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/ai")
 public class AiController {
-
-    @Autowired
-    private GeminiService geminiService;
-
-    @Autowired
-    private OpenAiService openAiService;
 
     @Autowired
     private OllamaService ollamaService;
@@ -46,13 +38,7 @@ public class AiController {
     }
 
     @PostMapping("/chat")
-    public ResponseEntity<ChatResponse> chat(
-            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
-            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
-            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
-            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
-            @RequestBody ChatRequest chatRequest) {
+    public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest chatRequest) {
         User currentUser = getCurrentUser();
         String context = "";
 
@@ -67,39 +53,17 @@ public class AiController {
         }
 
         String reply;
-        if ("openai".equalsIgnoreCase(provider)) {
-            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
-            if (!context.isEmpty()) {
-                reply = openAiService.askAboutNote(context, chatRequest.getMessage(), keyToUse);
-            } else {
-                reply = openAiService.generateContent(chatRequest.getMessage(), keyToUse);
-            }
-        } else if ("ollama".equalsIgnoreCase(provider)) {
-            if (!context.isEmpty()) {
-                reply = ollamaService.askAboutNote(context, chatRequest.getMessage(), customOllamaUrl, customOllamaModel);
-            } else {
-                reply = ollamaService.generateContent(chatRequest.getMessage(), customOllamaUrl, customOllamaModel);
-            }
+        if (!context.isEmpty()) {
+            reply = ollamaService.askAboutNote(context, chatRequest.getMessage(), null, null);
         } else {
-            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
-            if (!context.isEmpty()) {
-                reply = geminiService.askAboutNote(context, chatRequest.getMessage(), keyToUse);
-            } else {
-                reply = geminiService.generateContent(chatRequest.getMessage(), keyToUse);
-            }
+            reply = ollamaService.generateContent(chatRequest.getMessage(), null, null);
         }
 
         return ResponseEntity.ok(new ChatResponse(reply));
     }
 
     @PostMapping("/summarize")
-    public ResponseEntity<ChatResponse> summarize(
-            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
-            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
-            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
-            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
-            @RequestBody SummaryRequest summaryRequest) {
+    public ResponseEntity<ChatResponse> summarize(@RequestBody SummaryRequest summaryRequest) {
         User currentUser = getCurrentUser();
         String contentToSummarize = "";
 
@@ -117,28 +81,12 @@ public class AiController {
             return ResponseEntity.badRequest().body(new ChatResponse("Error: No content available to summarize"));
         }
 
-        String summary;
-        if ("openai".equalsIgnoreCase(provider)) {
-            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
-            summary = openAiService.generateSummary(contentToSummarize, keyToUse);
-        } else if ("ollama".equalsIgnoreCase(provider)) {
-            summary = ollamaService.generateSummary(contentToSummarize, customOllamaUrl, customOllamaModel);
-        } else {
-            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
-            summary = geminiService.generateSummary(contentToSummarize, keyToUse);
-        }
-
+        String summary = ollamaService.generateSummary(contentToSummarize, null, null);
         return ResponseEntity.ok(new ChatResponse(summary));
     }
 
     @PostMapping("/study-plan")
-    public ResponseEntity<ChatResponse> generateStudyPlan(
-            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
-            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
-            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
-            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
-            @RequestBody StudyPlanRequest studyPlanRequest) {
+    public ResponseEntity<ChatResponse> generateStudyPlan(@RequestBody StudyPlanRequest studyPlanRequest) {
         User currentUser = getCurrentUser();
         String contentSource = "";
 
@@ -157,34 +105,8 @@ public class AiController {
         }
 
         int days = studyPlanRequest.getDurationDays() != null ? studyPlanRequest.getDurationDays() : 7;
-        String studyPlan;
-        if ("openai".equalsIgnoreCase(provider)) {
-            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : currentUser.getOpenAiApiKey();
-            studyPlan = openAiService.generateStudyPlan(contentSource, days, keyToUse);
-        } else if ("ollama".equalsIgnoreCase(provider)) {
-            studyPlan = ollamaService.generateStudyPlan(contentSource, days, customOllamaUrl, customOllamaModel);
-        } else {
-            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : currentUser.getGeminiApiKey();
-            studyPlan = geminiService.generateStudyPlan(contentSource, days, keyToUse);
-        }
+        String studyPlan = ollamaService.generateStudyPlan(contentSource, days, null, null);
 
         return ResponseEntity.ok(new ChatResponse(studyPlan));
-    }
-
-    @PutMapping("/api-key")
-    public ResponseEntity<?> updateApiKey(@RequestBody java.util.Map<String, String> payload) {
-        User currentUser = getCurrentUser();
-        if (payload.containsKey("geminiApiKey")) {
-            currentUser.setGeminiApiKey(payload.get("geminiApiKey"));
-        }
-        if (payload.containsKey("openAiApiKey")) {
-            currentUser.setOpenAiApiKey(payload.get("openAiApiKey"));
-        }
-        // Backward compatibility for old calls
-        if (payload.containsKey("apiKey")) {
-            currentUser.setGeminiApiKey(payload.get("apiKey"));
-        }
-        userRepository.save(currentUser);
-        return ResponseEntity.ok(new MessageResponse("API Keys updated successfully"));
     }
 }

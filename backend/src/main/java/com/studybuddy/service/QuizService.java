@@ -24,18 +24,12 @@ public class QuizService {
     private NoteService noteService;
 
     @Autowired
-    private GeminiService geminiService;
-
-    @Autowired
-    private OpenAiService openAiService;
-
-    @Autowired
     private OllamaService ollamaService;
 
     @Autowired
     private ProgressService progressService;
 
-    public Quiz generateQuiz(@NonNull User user, @NonNull QuizRequest quizRequest, String provider, String customGeminiKey, String customOpenAiKey, String customOllamaUrl, String customOllamaModel) {
+    public Quiz generateQuiz(@NonNull User user, @NonNull QuizRequest quizRequest) {
         String contentSource = "";
         String quizTitle = "General Knowledge Quiz";
 
@@ -57,17 +51,8 @@ public class QuizService {
 
         int count = quizRequest.getQuestionCount() != null ? quizRequest.getQuestionCount() : 5;
 
-        // Generate MCQ questions using either OpenAI, Gemini, or Ollama
-        String questionsJson;
-        if ("openai".equalsIgnoreCase(provider)) {
-            String keyToUse = (customOpenAiKey != null && !customOpenAiKey.trim().isEmpty()) ? customOpenAiKey : user.getOpenAiApiKey();
-            questionsJson = openAiService.generateQuiz(contentSource, count, keyToUse);
-        } else if ("ollama".equalsIgnoreCase(provider)) {
-            questionsJson = ollamaService.generateQuiz(contentSource, count, customOllamaUrl, customOllamaModel);
-        } else {
-            String keyToUse = (customGeminiKey != null && !customGeminiKey.trim().isEmpty()) ? customGeminiKey : user.getGeminiApiKey();
-            questionsJson = geminiService.generateQuiz(contentSource, count, keyToUse);
-        }
+        // Generate MCQ questions using Ollama
+        String questionsJson = ollamaService.generateQuiz(contentSource, count, null, null);
 
         boolean isValidJson = false;
         try {

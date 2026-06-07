@@ -87,7 +87,7 @@ public class WebSecurityConfig {
         // Allow typical local development URLs and wildcards/custom urls if configured
         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "X-Gemini-API-Key", "X-OpenAI-API-Key", "X-Ai-Provider", "X-Ollama-URL", "X-Ollama-Model"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
         configuration.setAllowCredentials(true);
         

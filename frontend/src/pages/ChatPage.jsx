@@ -10,11 +10,7 @@ import {
   Calendar,
   AlertCircle,
   HelpCircle,
-  MessageSquare,
-  Settings,
-  Key,
-  Check,
-  Zap
+  MessageSquare
 } from 'lucide-react';
 import api from '../services/api';
 import axios from 'axios';
@@ -36,125 +32,7 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const [showSettings, setShowSettings] = useState(false);
-  const [aiProvider, setAiProvider] = useState(localStorage.getItem('ai_provider') || 'gemini');
-  const [savedGeminiKey, setSavedGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
-  const [tempGeminiKey, setTempGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
-  const [savedOpenAiKey, setSavedOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
-  const [tempOpenAiKey, setTempOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
 
-  // Ollama configurations
-  const [savedOllamaUrl, setSavedOllamaUrl] = useState(localStorage.getItem('ollama_url') || 'http://localhost:11434');
-  const [tempOllamaUrl, setTempOllamaUrl] = useState(localStorage.getItem('ollama_url') || 'http://localhost:11434');
-  const [savedOllamaModel, setSavedOllamaModel] = useState(localStorage.getItem('ollama_model') || 'llama3');
-  const [tempOllamaModel, setTempOllamaModel] = useState(localStorage.getItem('ollama_model') || 'llama3');
-
-  const [testingKey, setTestingKey] = useState(false);
-  const [apiKeySuccess, setApiKeySuccess] = useState('');
-  const [apiKeyError, setApiKeyError] = useState('');
-
-  const handleSwitchProvider = (newProvider) => {
-    localStorage.setItem('ai_provider', newProvider);
-    setAiProvider(newProvider);
-    setApiKeySuccess('');
-    setApiKeyError('');
-  };
-
-  const handleSaveGeminiKey = async () => {
-    if (!tempGeminiKey.trim()) {
-      setApiKeyError('Please enter a Gemini API key.');
-      return;
-    }
-    setTestingKey(true);
-    setApiKeySuccess('');
-    setApiKeyError('');
-    try {
-      localStorage.setItem('gemini_api_key', tempGeminiKey.trim());
-      localStorage.setItem('gemini_model', 'models/gemini-2.0-flash-lite');
-      setSavedGeminiKey(tempGeminiKey.trim());
-      setApiKeySuccess('Gemini API key saved successfully!');
-      await api.put('/api/ai/api-key', { geminiApiKey: tempGeminiKey.trim() });
-    } catch (err) {
-      console.error(err);
-      setApiKeyError('Failed to save Gemini key in database.');
-    } finally {
-      setTestingKey(false);
-    }
-  };
-
-  const handleSaveOpenAiKey = async () => {
-    if (!tempOpenAiKey.trim()) {
-      setApiKeyError('Please enter an OpenAI API key.');
-      return;
-    }
-    setTestingKey(true);
-    setApiKeySuccess('');
-    setApiKeyError('');
-    try {
-      localStorage.setItem('openai_api_key', tempOpenAiKey.trim());
-      setSavedOpenAiKey(tempOpenAiKey.trim());
-      setApiKeySuccess('OpenAI API key saved successfully!');
-      await api.put('/api/ai/api-key', { openAiApiKey: tempOpenAiKey.trim() });
-    } catch (err) {
-      console.error(err);
-      setApiKeyError('Failed to save OpenAI key in database.');
-    } finally {
-      setTestingKey(false);
-    }
-  };
-
-  const handleSaveOllamaSettings = () => {
-    if (!tempOllamaUrl.trim()) {
-      setApiKeyError('Please enter an Ollama Server URL.');
-      return;
-    }
-    if (!tempOllamaModel.trim()) {
-      setApiKeyError('Please enter an Ollama Model name.');
-      return;
-    }
-    localStorage.setItem('ollama_url', tempOllamaUrl.trim());
-    localStorage.setItem('ollama_model', tempOllamaModel.trim());
-    setSavedOllamaUrl(tempOllamaUrl.trim());
-    setSavedOllamaModel(tempOllamaModel.trim());
-    setApiKeySuccess('Ollama configuration saved successfully!');
-    setApiKeyError('');
-  };
-
-  const handleClearGeminiKey = async () => {
-    localStorage.removeItem('gemini_api_key');
-    localStorage.removeItem('gemini_model');
-    setSavedGeminiKey('');
-    setTempGeminiKey('');
-    setApiKeySuccess('Gemini API key cleared successfully.');
-    try {
-      await api.put('/api/ai/api-key', { geminiApiKey: null });
-    } catch (dbErr) {
-      console.error('Failed to clear Gemini key in database:', dbErr);
-    }
-  };
-
-  const handleClearOpenAiKey = async () => {
-    localStorage.removeItem('openai_api_key');
-    setSavedOpenAiKey('');
-    setTempOpenAiKey('');
-    setApiKeySuccess('OpenAI API key cleared successfully.');
-    try {
-      await api.put('/api/ai/api-key', { openAiApiKey: null });
-    } catch (dbErr) {
-      console.error('Failed to clear OpenAI key in database:', dbErr);
-    }
-  };
-
-  const handleClearOllamaSettings = () => {
-    localStorage.removeItem('ollama_url');
-    localStorage.removeItem('ollama_model');
-    setSavedOllamaUrl('http://localhost:11434');
-    setTempOllamaUrl('http://localhost:11434');
-    setSavedOllamaModel('llama3');
-    setTempOllamaModel('llama3');
-    setApiKeySuccess('Ollama configuration reset to defaults.');
-    setApiKeyError('');
-  };
 
   const chatEndRef = useRef(null);
 
@@ -200,7 +78,7 @@ export default function ChatPage() {
     } catch (err) {
       console.error(err);
       setError('Error communicating with AI Study Buddy. Verify server configuration.');
-      setMessages(prev => [...prev, { sender: 'bot', text: "Sorry, I encountered an error. Please verify that your backend and Gemini API keys are configured." }]);
+      setMessages(prev => [...prev, { sender: 'bot', text: "Sorry, I encountered an error. Please verify that your backend and local Ollama instance are running and reachable." }]);
     } finally {
       setLoading(false);
     }
@@ -357,210 +235,11 @@ export default function ChatPage() {
             <Calendar className="h-3.5 w-3.5 opacity-80" /> Study Plan
           </button>
 
-          <button
-            type="button"
-            onClick={() => setShowSettings(!showSettings)}
-            className={`px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 text-xs font-bold ${
-              (aiProvider === 'openai' ? savedOpenAiKey : (aiProvider === 'ollama' ? true : savedGeminiKey)) 
-                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100/50' 
-                : 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100/50'
-            }`}
-            title="Configure AI API Keys"
-          >
-            <Settings className="h-3.5 w-3.5" />
-            {(aiProvider === 'openai' ? savedOpenAiKey : (aiProvider === 'ollama' ? true : savedGeminiKey)) 
-              ? `${aiProvider === 'openai' ? 'OpenAI' : (aiProvider === 'ollama' ? 'Ollama' : 'Gemini')} Live` 
-              : 'AI Keys Config'}
-          </button>
+
 
         </div>
 
       </div>
-
-      {showSettings && (
-        <div className="glass-panel p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-4 space-y-4 shadow-sm animate-fade-in">
-          {/* Provider Selector */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-655 dark:text-slate-350 font-semibold">Active AI Provider:</span>
-              <select
-                value={aiProvider}
-                onChange={(e) => handleSwitchProvider(e.target.value)}
-                className="glass-input py-1 px-3 text-xs w-48 focus:ring-1 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
-              >
-                <option value="gemini">Google Gemini</option>
-                <option value="openai">OpenAI ChatGPT</option>
-                <option value="ollama">Local Ollama</option>
-              </select>
-            </div>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-              {aiProvider === 'openai' && (
-                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-85">OpenAI API Keys</a></>
-              )}
-              {aiProvider === 'gemini' && (
-                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">Google AI Studio</a></>
-              )}
-              {aiProvider === 'ollama' && (
-                <>Requires <a href="https://ollama.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">Ollama</a> running locally</>
-              )}
-            </span>
-          </div>
-
-          {/* Key Configuration Inputs */}
-          {aiProvider === 'openai' ? (
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                OpenAI API Key Configuration
-              </h3>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <input
-                    type="password"
-                    value={tempOpenAiKey}
-                    onChange={(e) => {
-                      setTempOpenAiKey(e.target.value);
-                      setApiKeySuccess('');
-                      setApiKeyError('');
-                    }}
-                    placeholder={savedOpenAiKey ? "••••••••••••••••••••••••••••••••" : "Enter OpenAI API Key (sk-...)"}
-                    className="w-full glass-input text-xs py-2 px-3"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={handleSaveOpenAiKey}
-                    disabled={testingKey}
-                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
-                  >
-                    {testingKey ? 'Saving...' : 'Save Key'}
-                  </button>
-                  {savedOpenAiKey && (
-                    <button
-                      type="button"
-                      onClick={handleClearOpenAiKey}
-                      className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
-                    >
-                      Clear Key
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : aiProvider === 'ollama' ? (
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                Local Ollama Configuration
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
-                    Ollama API Base URL
-                  </label>
-                  <input
-                    type="text"
-                    value={tempOllamaUrl}
-                    onChange={(e) => {
-                      setTempOllamaUrl(e.target.value);
-                      setApiKeySuccess('');
-                      setApiKeyError('');
-                    }}
-                    placeholder="e.g. http://localhost:11434"
-                    className="w-full glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
-                    Ollama Model Name
-                  </label>
-                  <input
-                    type="text"
-                    value={tempOllamaModel}
-                    onChange={(e) => {
-                      setTempOllamaModel(e.target.value);
-                      setApiKeySuccess('');
-                      setApiKeyError('');
-                    }}
-                    placeholder="e.g. llama3, llama3.1, mistral"
-                    className="w-full glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2 justify-end pt-1">
-                <button
-                  type="button"
-                  onClick={handleSaveOllamaSettings}
-                  className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-sm"
-                >
-                  Save Config
-                </button>
-                <button
-                  type="button"
-                  onClick={handleClearOllamaSettings}
-                  className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
-                >
-                  Reset Defaults
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                Google Gemini API Key Configuration
-              </h3>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <input
-                    type="password"
-                    value={tempGeminiKey}
-                    onChange={(e) => {
-                      setTempGeminiKey(e.target.value);
-                      setApiKeySuccess('');
-                      setApiKeyError('');
-                    }}
-                    placeholder={savedGeminiKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
-                    className="w-full glass-input text-xs py-2 px-3"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={handleSaveGeminiKey}
-                    disabled={testingKey}
-                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
-                  >
-                    {testingKey ? 'Saving...' : 'Save Key'}
-                  </button>
-                  {savedGeminiKey && (
-                    <button
-                      type="button"
-                      onClick={handleClearGeminiKey}
-                      className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
-                    >
-                      Clear Key
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {apiKeySuccess && (
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-              <Check className="h-3.5 w-3.5" /> {apiKeySuccess}
-            </p>
-          )}
-          {apiKeyError && (
-            <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
-              <AlertCircle className="h-3.5 w-3.5" /> {apiKeyError}
-            </p>
-          )}
-          
-          <p className="text-[10px] text-slate-455 dark:text-slate-500">
-            API keys are saved in local storage to authenticate requests dynamically. They are never logged on the server.
-          </p>
-        </div>
-      )}
 
       {error && (
         <div className="flex items-center gap-2.5 p-3 mb-3 rounded-lg bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs">

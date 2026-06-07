@@ -35,22 +35,11 @@ public class QuizController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generateQuiz(
-            @RequestHeader(value = "X-Ai-Provider", required = false) String provider,
-            @RequestHeader(value = "X-Gemini-API-Key", required = false) String customGeminiKey,
-            @RequestHeader(value = "X-OpenAI-API-Key", required = false) String customOpenAiKey,
-            @RequestHeader(value = "X-Ollama-URL", required = false) String customOllamaUrl,
-            @RequestHeader(value = "X-Ollama-Model", required = false) String customOllamaModel,
-            @RequestBody QuizRequest quizRequest) {
+    public ResponseEntity<?> generateQuiz(@RequestBody QuizRequest quizRequest) {
         User currentUser = getCurrentUser();
         Quiz quiz = quizService.generateQuiz(
                 Objects.requireNonNull(currentUser, "currentUser"), 
-                Objects.requireNonNull(quizRequest, "quizRequest"), 
-                provider, 
-                customGeminiKey, 
-                customOpenAiKey,
-                customOllamaUrl,
-                customOllamaModel
+                Objects.requireNonNull(quizRequest, "quizRequest")
         );
         return ResponseEntity.ok(quiz);
     }
