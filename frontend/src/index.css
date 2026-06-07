@@ -127,22 +127,6 @@ html.dark .text-glow-emerald {
    ====================================================================== */
 
 
-html:not(.dark) .text-slate-100 {
-  color: #0f172a !important; /* slate-900 */
-}
-
-html:not(.dark) .text-slate-200 {
-  color: #1e293b !important; /* slate-800 */
-}
-
-html:not(.dark) .text-slate-300 {
-  color: #334155 !important; /* slate-700 */
-}
-
-html:not(.dark) .text-slate-400 {
-  color: #475569 !important; /* slate-600 */
-}
-
 html:not(.dark) .border-white\/5,
 html:not(.dark) .border-white\/10 {
   border-color: #e2e8f0 !important;

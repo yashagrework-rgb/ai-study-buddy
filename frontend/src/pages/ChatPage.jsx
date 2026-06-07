@@ -493,10 +493,10 @@ export default function ChatPage() {
 
               {/* Message Bubble */}
               <div className={`
-                p-4 rounded-xl max-w-xl text-slate-800 dark:text-slate-250 border text-sm leading-relaxed
+                p-4 rounded-xl max-w-xl border text-sm leading-relaxed shadow-sm
                 ${isBot 
-                  ? 'bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 shadow-sm' 
-                  : 'bg-indigo-600 border-indigo-700 text-white shadow-sm'}
+                  ? 'bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 text-slate-800 dark:text-slate-250' 
+                  : 'bg-indigo-600 border-indigo-700 text-white dark:text-white'}
               `}>
                 {isBot ? formatText(msg.text) : <p className="whitespace-pre-wrap">{msg.text}</p>}
               </div>
