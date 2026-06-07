@@ -23,12 +23,18 @@ public class OllamaService {
         String urlToUse = (customOllamaUrl != null && !customOllamaUrl.trim().isEmpty()) ? customOllamaUrl : defaultOllamaUrl;
         String modelToUse = (customOllamaModel != null && !customOllamaModel.trim().isEmpty()) ? customOllamaModel : defaultOllamaModel;
 
+        // First do a fast connectivity check (5 second timeout)
+        if (!isOllamaReachable(urlToUse)) {
+            logger.warn("Ollama at {} is not reachable. Using local fallback immediately.", urlToUse);
+            return getMockResponse(prompt);
+        }
+
         try {
             logger.info("Connecting to Ollama at {} using model {}", urlToUse, modelToUse);
             
             SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-            requestFactory.setConnectTimeout(30000);  // 30 second connection timeout
-            requestFactory.setReadTimeout(120000);    // 120 second read timeout for AI generation
+            requestFactory.setConnectTimeout(10000);   // 10 second connection timeout
+            requestFactory.setReadTimeout(180000);     // 3 minute read timeout for AI generation
             
             org.springframework.web.client.RestClient.Builder restClientBuilder = 
                 org.springframework.web.client.RestClient.builder()
@@ -55,6 +61,27 @@ public class OllamaService {
             return getMockResponse(prompt);
         }
     }
+
+    private boolean isOllamaReachable(String baseUrl) {
+        try {
+            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+            factory.setConnectTimeout(5000);   // 5 second connection timeout only
+            factory.setReadTimeout(5000);
+            org.springframework.web.client.RestClient pingClient = org.springframework.web.client.RestClient.builder()
+                    .defaultHeader("Bypass-Tunnel-Reminder", "true")
+                    .defaultHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                    .requestFactory(factory)
+                    .build();
+            String pingUrl = baseUrl.trim().replaceAll("/$", "") + "/";
+            String response = pingClient.get().uri(pingUrl).retrieve().body(String.class);
+            logger.info("Ollama ping succeeded: {}", pingUrl);
+            return true;
+        } catch (Exception e) {
+            logger.warn("Ollama ping failed at {}: {}", baseUrl, e.getMessage());
+            return false;
+        }
+    }
+
 
     public String generateQuiz(String noteContent, int questionCount, String customOllamaUrl, String customOllamaModel) {
         String prompt = "You are a professional quiz maker. Generate a quiz of exactly " + questionCount + 
