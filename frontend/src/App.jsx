@@ -12,7 +12,9 @@ import {
   Menu, 
   X,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 // Import Pages
@@ -45,7 +47,7 @@ const PublicRoute = ({ children }) => {
 };
 
 // Layout for Authenticated Pages
-const AppLayout = ({ children, user, onLogout }) => {
+const AppLayout = ({ children, user, onLogout, theme, setTheme }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -59,47 +61,47 @@ const AppLayout = ({ children, user, onLogout }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-dark-950 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#faf9f6] dark:bg-[#0c0e12] flex flex-col md:flex-row transition-colors duration-300">
       {/* Mobile Header */}
-      <header className="md:hidden flex items-center justify-between px-6 py-4 glass-panel border-b border-white/5 z-20">
+      <header className="md:hidden flex items-center justify-between px-6 py-4 bg-white dark:bg-[#13161d] border-b border-slate-200 dark:border-slate-800 z-20">
         <div className="flex items-center gap-2">
-          <GraduationCap className="h-7 w-7 text-primary-400" />
-          <span className="font-bold text-xl tracking-tight text-glow text-white">StudyBuddy</span>
+          <GraduationCap className="h-6 w-6 text-slate-800 dark:text-slate-200" />
+          <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">StudyBuddy</span>
         </div>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 rounded-md text-slate-400 hover:text-white">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 rounded-md text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white">
           {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </header>
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed inset-y-0 left-0 w-64 glass-panel border-r border-white/5 flex flex-col justify-between z-30 transition-transform duration-300 transform
+        fixed inset-y-0 left-0 w-64 bg-white dark:bg-[#13161d] border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between z-30 transition-transform duration-300 transform
         md:translate-x-0 md:static md:h-screen
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div>
           {/* Sidebar Brand Logo */}
-          <div className="hidden md:flex items-center gap-3 px-6 py-8">
-            <div className="p-2 bg-primary-500/10 rounded-xl border border-primary-500/20 shadow-glass-sm">
-              <GraduationCap className="h-8 w-8 text-primary-400" />
+          <div className="hidden md:flex items-center gap-2.5 px-6 py-8">
+            <div className="p-2 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200 dark:border-slate-700">
+              <GraduationCap className="h-6 w-6 text-slate-700 dark:text-slate-200" />
             </div>
             <div>
-              <span className="font-bold text-xl tracking-tight text-white block">StudyBuddy</span>
-              <span className="text-xs text-primary-400 flex items-center gap-1 font-semibold">
-                <Sparkles className="h-3 w-3" /> AI Co-pilot
+              <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white block leading-none mb-1">StudyBuddy</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                Workspace
               </span>
             </div>
           </div>
 
           {/* User Preview */}
           <div className="px-4 mb-6 md:mt-2">
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-primary-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800/80 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center font-semibold text-sm border border-slate-300 dark:border-slate-700">
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="overflow-hidden">
-                <h4 className="font-medium text-sm text-slate-100 truncate">{user?.name || 'Student'}</h4>
-                <p className="text-xs text-slate-400 truncate">{user?.email || 'student@study.edu'}</p>
+                <h4 className="font-semibold text-sm text-slate-800 dark:text-slate-200 truncate">{user?.name || 'Student'}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email || 'student@study.edu'}</p>
               </div>
             </div>
           </div>
@@ -115,15 +117,15 @@ const AppLayout = ({ children, user, onLogout }) => {
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`
-                    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
+                    flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
                     ${isActive 
-                      ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/15 border-l-4 border-primary-400' 
-                      : 'text-slate-400 hover:text-white hover:bg-white/[0.03] border-l-4 border-transparent'}
+                      ? 'bg-slate-900 text-white dark:bg-slate-800 dark:text-white shadow-sm' 
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/30'}
                   `}
                 >
-                  <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
+                  <Icon className={`h-4.5 w-4.5 ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
                   {item.name}
-                  {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
+                  {isActive && <ChevronRight className="h-4 w-4 ml-auto opacity-55" />}
                 </Link>
               );
             })}
@@ -131,12 +133,29 @@ const AppLayout = ({ children, user, onLogout }) => {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/5">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-850">
+          <button 
+            type="button"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="flex items-center gap-3 w-full px-4 py-2.5 mb-2 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-all duration-150"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun className="h-4.5 w-4.5 text-amber-500" />
+                Light Mode
+              </>
+            ) : (
+              <>
+                <Moon className="h-4.5 w-4.5 text-slate-500" />
+                Dark Mode
+              </>
+            )}
+          </button>
           <button 
             onClick={onLogout}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:text-white hover:bg-rose-500/10 transition-all duration-200"
+            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium text-rose-500 dark:text-rose-400 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 transition-all duration-150"
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-4.5 w-4.5" />
             Logout
           </button>
         </div>
@@ -154,6 +173,16 @@ const AppLayout = ({ children, user, onLogout }) => {
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -214,42 +243,42 @@ export default function App() {
         {/* Protected Dashboard/App Routes */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
-            <AppLayout user={user} onLogout={handleLogout}>
+            <AppLayout user={user} onLogout={handleLogout} theme={theme} setTheme={setTheme}>
               <Dashboard user={user} />
             </AppLayout>
           </ProtectedRoute>
         } />
         <Route path="/notes" element={
           <ProtectedRoute>
-            <AppLayout user={user} onLogout={handleLogout}>
+            <AppLayout user={user} onLogout={handleLogout} theme={theme} setTheme={setTheme}>
               <NotesPage />
             </AppLayout>
           </ProtectedRoute>
         } />
         <Route path="/chat" element={
           <ProtectedRoute>
-            <AppLayout user={user} onLogout={handleLogout}>
+            <AppLayout user={user} onLogout={handleLogout} theme={theme} setTheme={setTheme}>
               <ChatPage />
             </AppLayout>
           </ProtectedRoute>
         } />
         <Route path="/quiz" element={
           <ProtectedRoute>
-            <AppLayout user={user} onLogout={handleLogout}>
+            <AppLayout user={user} onLogout={handleLogout} theme={theme} setTheme={setTheme}>
               <QuizPage />
             </AppLayout>
           </ProtectedRoute>
         } />
         <Route path="/results" element={
           <ProtectedRoute>
-            <AppLayout user={user} onLogout={handleLogout}>
+            <AppLayout user={user} onLogout={handleLogout} theme={theme} setTheme={setTheme}>
               <ResultsPage />
             </AppLayout>
           </ProtectedRoute>
         } />
         <Route path="/profile" element={
           <ProtectedRoute>
-            <AppLayout user={user} onLogout={handleLogout}>
+            <AppLayout user={user} onLogout={handleLogout} theme={theme} setTheme={setTheme}>
               <ProfilePage user={user} />
             </AppLayout>
           </ProtectedRoute>

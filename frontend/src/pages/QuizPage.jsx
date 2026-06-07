@@ -8,8 +8,6 @@ import {
   FileCheck, 
   AlertCircle,
   Loader2,
-  CheckCircle,
-  XCircle,
   Award
 } from 'lucide-react';
 import api from '../services/api';
@@ -151,68 +149,68 @@ export default function QuizPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 text-slate-800 dark:text-slate-200">
       
       {error && (
-        <div className="flex items-center gap-2.5 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
-          <AlertCircle className="h-5 w-5 flex-shrink-0" />
+        <div className="flex items-center gap-2.5 p-3.5 rounded-lg bg-rose-50 dark:bg-rose-955/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs sm:text-sm">
+          <AlertCircle className="h-4.5 w-4.5 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Mode 1: Quiz Submission Results */}
       {quizSubmitted ? (
-        <div className="glass-panel p-8 rounded-3xl border border-white/5 text-center space-y-6 animate-fade-in">
+        <div className="glass-panel p-8 rounded-xl border border-slate-200 dark:border-slate-800 text-center space-y-6 animate-fade-in">
           
-          <div className="p-4 bg-primary-500/10 rounded-2xl w-fit mx-auto border border-primary-500/20 text-primary-400">
-            <Award className="h-12 w-12" />
+          <div className="p-3.5 bg-slate-105 dark:bg-slate-800 rounded-lg w-fit mx-auto border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
+            <Award className="h-10 w-10" />
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">Quiz Completed!</h2>
-            <p className="text-sm text-slate-400">Your results have been registered to your profile progress</p>
+          <div className="space-y-1.5">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Quiz Completed</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Your score has been registered to your profile</p>
           </div>
 
-          {/* Large Circular Score Grid */}
-          <div className="py-6">
-            <div className="h-32 w-32 rounded-full border-4 border-primary-500/20 border-t-primary-500 flex flex-col items-center justify-center mx-auto bg-white/[0.01] shadow-glass-sm animate-pulse-slow">
-              <span className="text-3xl font-black text-white">{scoreAchieved}%</span>
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-1">Score</span>
+          {/* Clean Circular Score Indicator */}
+          <div className="py-4">
+            <div className="h-28 w-28 rounded-full border-2 border-indigo-650 flex flex-col items-center justify-center mx-auto bg-slate-50 dark:bg-slate-900/40 shadow-sm">
+              <span className="text-2xl font-extrabold text-slate-900 dark:text-white">{scoreAchieved}%</span>
+              <span className="text-[9px] text-slate-450 dark:text-slate-500 uppercase tracking-widest font-bold mt-0.5">Score</span>
             </div>
           </div>
 
-          <div className="max-w-md mx-auto p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-slate-400 space-y-2.5 text-left">
+          <div className="max-w-md mx-auto p-4 rounded-lg bg-slate-50 dark:bg-[#151b29] border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-2.5 text-left">
             <div className="flex justify-between">
               <span>Total Questions:</span>
-              <span className="font-semibold text-slate-200">{questions.length}</span>
+              <span className="font-semibold text-slate-850 dark:text-slate-200">{questions.length}</span>
             </div>
             <div className="flex justify-between">
               <span>Correct Answers:</span>
-              <span className="font-semibold text-emerald-400">
-                {Math.round((scoreAchieved / 100) * questions.length)}
+              <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                {Math.round((scoreAchieved / 100) * questions.length)} / {questions.length}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Time Added:</span>
-              <span className="font-semibold text-indigo-400">{questions.length * 2} mins study credit</span>
+              <span>Estimated Study Credit:</span>
+              <span className="font-semibold text-indigo-600 dark:text-indigo-400">+{questions.length * 2} mins</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-4 pt-4">
+          <div className="flex items-center justify-center gap-3 pt-4">
             <button
               onClick={() => {
                 setQuiz(null);
                 setQuizSubmitted(false);
               }}
-              className="px-6 py-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 text-sm font-semibold text-slate-300 transition-all"
+              className="px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all shadow-sm"
             >
               Take Another Quiz
             </button>
             <button
               onClick={() => navigate('/results')}
-              className="px-6 py-3 rounded-xl bg-primary-600 hover:bg-primary-500 text-sm font-semibold text-white transition-all shadow-md shadow-primary-600/10"
+              className="px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white transition-all shadow-sm"
             >
-              View Quiz History
+              View History
             </button>
           </div>
 
@@ -220,34 +218,34 @@ export default function QuizPage() {
       ) : quiz ? (
         
         // Mode 2: Quiz Engine Running
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-6 animate-fade-in">
+        <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-800 space-y-6 animate-fade-in">
           
           {/* Header Progress indicator */}
           <div className="space-y-3">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span className="font-bold text-primary-400">{quiz.title}</span>
-              <span className="font-medium">Question {currentQuestionIndex + 1} of {questions.length}</span>
+            <div className="flex justify-between text-xs text-slate-550 dark:text-slate-400">
+              <span className="font-bold text-slate-850 dark:text-slate-300 truncate max-w-[70%]">{quiz.title}</span>
+              <span className="font-semibold flex-shrink-0">Question {currentQuestionIndex + 1} of {questions.length}</span>
             </div>
 
-            {/* Custom progress bar */}
-            <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+            {/* Progress bar */}
+            <div className="w-full bg-slate-100 dark:bg-slate-850 h-1.5 rounded-full overflow-hidden">
               <div 
-                className="bg-primary-500 h-full transition-all duration-300"
+                className="bg-indigo-600 h-full transition-all duration-200"
                 style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
               ></div>
             </div>
           </div>
 
           {/* Active Question Box */}
-          <div className="p-5 rounded-xl bg-white/[0.01] border border-white/5 space-y-4">
-            <h3 className="font-bold text-base text-slate-100 flex items-start gap-2 leading-relaxed">
-              <HelpCircle className="h-5 w-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+          <div className="p-5 rounded-lg bg-slate-50/50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 space-y-4">
+            <h3 className="font-bold text-sm sm:text-base text-slate-850 dark:text-slate-100 flex items-start gap-2 leading-relaxed">
+              <HelpCircle className="h-5 w-5 text-indigo-550 dark:text-indigo-400 flex-shrink-0 mt-0.5" />
               <span>{questions[currentQuestionIndex]?.question}</span>
             </h3>
           </div>
 
           {/* Options List */}
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {questions[currentQuestionIndex]?.options.map((option, idx) => {
               const isSelected = selectedAnswers[currentQuestionIndex] === option;
               return (
@@ -255,18 +253,18 @@ export default function QuizPage() {
                   key={idx}
                   onClick={() => handleSelectOption(option)}
                   className={`
-                    w-full text-left p-4 rounded-xl text-sm transition-all border flex items-center justify-between
+                    w-full text-left p-4 rounded-lg text-xs sm:text-sm transition-all border flex items-center justify-between
                     ${isSelected 
-                      ? 'bg-primary-600/15 border-primary-500 text-white font-medium' 
-                      : 'bg-white/[0.01] border-white/5 hover:border-white/15 text-slate-300'}
+                      ? 'bg-indigo-50/50 border-indigo-550 text-indigo-750 dark:bg-indigo-950/20 dark:border-indigo-850 dark:text-indigo-300 font-semibold' 
+                      : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-650 dark:text-slate-350'}
                   `}
                 >
                   <span>{option}</span>
                   <div className={`
-                    h-4.5 w-4.5 rounded-full border flex items-center justify-center flex-shrink-0
-                    ${isSelected ? 'border-primary-400 bg-primary-500' : 'border-slate-600'}
+                    h-4 w-4 rounded-full border flex items-center justify-center flex-shrink-0
+                    ${isSelected ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300 dark:border-slate-700'}
                   `}>
-                    {isSelected && <div className="h-2 w-2 rounded-full bg-white"></div>}
+                    {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-white"></div>}
                   </div>
                 </button>
               );
@@ -274,11 +272,11 @@ export default function QuizPage() {
           </div>
 
           {/* Actions Next/Prev/Submit */}
-          <div className="flex items-center justify-between pt-4 border-t border-white/5">
+          <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
             <button
               onClick={handlePrevQuestion}
               disabled={currentQuestionIndex === 0}
-              className="px-4 py-2 text-xs font-semibold rounded-lg bg-white/[0.02] border border-white/5 text-slate-400 hover:text-white disabled:opacity-40"
+              className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 disabled:opacity-40 shadow-sm"
             >
               Previous
             </button>
@@ -287,16 +285,16 @@ export default function QuizPage() {
               <button
                 onClick={handleSubmitQuiz}
                 disabled={loading}
-                className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition-all shadow-md shadow-emerald-600/10 flex items-center gap-1.5"
+                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white transition-all shadow-sm flex items-center gap-1.5"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileCheck className="h-4 w-4" />}
-                Submit Quiz
+                Submit Answers
               </button>
             ) : (
               <button
                 onClick={handleNextQuestion}
                 disabled={!selectedAnswers[currentQuestionIndex]}
-                className="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-500 text-xs font-semibold text-white transition-all shadow-md shadow-primary-600/10 flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
               >
                 Next Question <ArrowRight className="h-4 w-4" />
               </button>
@@ -307,30 +305,30 @@ export default function QuizPage() {
       ) : (
         
         // Mode 3: Quiz Setup Configuration
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-6 animate-fade-in">
+        <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-800 space-y-6 animate-fade-in">
           
-          <div className="border-b border-white/5 pb-4">
-            <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
-              <BrainCircuit className="h-6 w-6 text-primary-400" /> AI Practice Exam Room
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <BrainCircuit className="h-5.5 w-5.5 text-indigo-650 dark:text-indigo-400" /> AI Practice Exam Room
             </h2>
-            <p className="text-xs text-slate-400 mt-1">Generate dynamic checks on note guides instantly</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Generate dynamic assessments to verify your note guides instantly</p>
           </div>
 
           <form onSubmit={handleGenerateQuiz} className="space-y-6">
             
             {/* Select Study Context */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
                 1. Select Study Material
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
-                  <BookOpen className="h-5 w-5" />
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-450 dark:text-slate-500">
+                  <BookOpen className="h-4.5 w-4.5" />
                 </span>
                 <select
                   value={selectedNoteId}
                   onChange={(e) => setSelectedNoteId(e.target.value)}
-                  className="w-full glass-input pl-11"
+                  className="w-full glass-input pl-11 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800 focus:ring-1 focus:ring-slate-350"
                   required
                 >
                   <option value="">-- Select Note Context --</option>
@@ -343,7 +341,7 @@ export default function QuizPage() {
 
             {/* Select Question Count */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2.5">
+              <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2.5">
                 2. Number of MCQ Questions
               </label>
               <div className="grid grid-cols-2 gap-4">
@@ -353,13 +351,13 @@ export default function QuizPage() {
                     type="button"
                     onClick={() => setQuestionCount(count)}
                     className={`
-                      py-3.5 px-4 rounded-xl border font-bold text-sm transition-all
+                      py-3 px-4 rounded-lg border font-semibold text-xs sm:text-sm transition-all shadow-sm
                       ${questionCount === count 
-                        ? 'bg-primary-600/15 border-primary-500 text-white' 
-                        : 'bg-white/[0.01] border-white/5 hover:border-white/15 text-slate-400'}
+                        ? 'bg-indigo-50/50 border-indigo-500 text-indigo-700 dark:bg-indigo-950/20 dark:border-indigo-850 dark:text-indigo-300' 
+                        : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-550 dark:text-slate-400'}
                     `}
                   >
-                    {count} MCQs
+                    {count} Questions
                   </button>
                 ))}
               </div>
@@ -369,17 +367,17 @@ export default function QuizPage() {
             <button
               type="submit"
               disabled={loading || notes.length === 0}
-              className="w-full py-3.5 px-4 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-600/20 flex items-center justify-center gap-2 group disabled:opacity-50"
+              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 group disabled:opacity-50 text-sm"
             >
               {loading ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Generating quiz using Gemini...
+                  <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                  Generating quiz using AI...
                 </>
               ) : (
                 <>
-                  Generate Quiz
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  Generate Practice Quiz
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </>
               )}
             </button>

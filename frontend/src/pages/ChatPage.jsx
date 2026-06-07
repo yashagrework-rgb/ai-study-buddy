@@ -223,23 +223,23 @@ export default function ChatPage() {
     if (!text) return '';
     return text.split('\n').map((line, i) => {
       let content = line;
-      let styleClass = "my-1 text-sm leading-relaxed";
+      let styleClass = "my-1 text-sm leading-relaxed text-slate-700 dark:text-slate-300";
 
       // Headers
       if (line.startsWith('### ')) {
         content = line.substring(4);
-        styleClass = "text-base font-bold text-white mt-3 mb-1.5 border-b border-white/5 pb-1 block";
+        styleClass = "text-base font-bold text-slate-900 dark:text-white mt-3 mb-1.5 border-b border-slate-200 dark:border-slate-850 pb-1 block";
       } else if (line.startsWith('## ')) {
         content = line.substring(3);
-        styleClass = "text-lg font-extrabold text-white mt-4 mb-2 block";
+        styleClass = "text-lg font-extrabold text-slate-900 dark:text-white mt-4 mb-2 block";
       } else if (line.startsWith('# ')) {
         content = line.substring(2);
-        styleClass = "text-xl font-black text-white mt-4 mb-2 block";
+        styleClass = "text-xl font-black text-slate-900 dark:text-white mt-4 mb-2 block";
       }
       // Bullet points
       else if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
         content = '• ' + line.trim().substring(2);
-        styleClass = "pl-4 text-sm text-slate-300 my-0.5 list-none";
+        styleClass = "pl-4 text-sm text-slate-600 dark:text-slate-405 my-0.5 list-none";
       }
 
       // Bold formatting parsing **text**
@@ -254,7 +254,7 @@ export default function ChatPage() {
           parts.push(content.substring(lastIndex, match.index));
         }
         // Add bolded text
-        parts.push(<strong key={match.index} className="text-white font-semibold">{match[1]}</strong>);
+        parts.push(<strong key={match.index} className="text-slate-950 dark:text-white font-semibold">{match[1]}</strong>);
         lastIndex = boldRegex.lastIndex;
       }
       
@@ -272,18 +272,18 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-[82vh] max-h-[82vh]">
+    <div className="flex flex-col h-[82vh] max-h-[82vh] text-slate-800 dark:text-slate-200">
       
       {/* Top Header: Select Note Context */}
-      <div className="glass-panel p-4 rounded-2xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+      <div className="glass-panel p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary-500/10 rounded-xl border border-primary-500/20 text-primary-400">
-            <Bot className="h-5.5 w-5.5" />
+          <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
+            <Bot className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">AI Co-pilot Study Lounge</h2>
-            <p className="text-xs text-slate-400">Select a study guide context below</p>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Study Chat Workspace</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Ask questions and review study guide context</p>
           </div>
         </div>
 
@@ -291,11 +291,11 @@ export default function ChatPage() {
         <div className="flex flex-wrap items-center gap-3">
           
           <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-slate-400" />
+            <BookOpen className="h-4 w-4 text-slate-455" />
             <select
               value={selectedNoteId}
               onChange={(e) => setSelectedNoteId(e.target.value)}
-              className="glass-input py-1.5 px-3 text-xs w-48 focus:ring-0 focus:border-white/20"
+              className="glass-input py-1.5 px-3 text-xs w-48 focus:ring-1 focus:ring-slate-350 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
             >
               <option value="">-- No Context (General) --</option>
               {notes.map(note => (
@@ -307,35 +307,35 @@ export default function ChatPage() {
           <button
             onClick={handleTriggerSummary}
             disabled={!selectedNoteId || loading}
-            className="px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-white/20 hover:bg-white/[0.08] text-xs font-semibold text-slate-300 transition-all flex items-center gap-1.5 disabled:opacity-45"
+            className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all flex items-center gap-1.5 disabled:opacity-45 shadow-sm"
             title="Summarize Note"
           >
-            <FileText className="h-3.5 w-3.5" /> Summarize
+            <FileText className="h-3.5 w-3.5 text-slate-400" /> Summarize
           </button>
 
           <button
             onClick={handleTriggerStudyPlan}
             disabled={!selectedNoteId || loading}
-            className="px-3.5 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-xs font-semibold text-white transition-all flex items-center gap-1.5 shadow-md shadow-primary-600/10 disabled:opacity-45"
+            className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200 text-xs font-semibold text-white transition-all flex items-center gap-1.5 disabled:opacity-45 shadow-sm"
             title="7-Day Study Plan"
           >
-            <Calendar className="h-3.5 w-3.5" /> Study Plan
+            <Calendar className="h-3.5 w-3.5 opacity-80" /> Study Plan
           </button>
 
           <button
             type="button"
             onClick={() => setShowSettings(!showSettings)}
-            className={`px-3.5 py-2 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold ${
+            className={`px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 text-xs font-bold ${
               (aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' 
-                : 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100/50' 
+                : 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100/50'
             }`}
             title="Configure AI API Keys"
           >
-            <Zap className="h-3.5 w-3.5 animate-pulse" />
+            <Settings className="h-3.5 w-3.5" />
             {(aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
               ? `${aiProvider === 'openai' ? 'OpenAI' : 'Gemini'} Live` 
-              : 'AI Offline'}
+              : 'AI Keys Config'}
           </button>
 
         </div>
@@ -343,25 +343,25 @@ export default function ChatPage() {
       </div>
 
       {showSettings && (
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 mb-4 space-y-4 bg-white/[0.02] shadow-lg animate-fade-in">
+        <div className="glass-panel p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-4 space-y-4 shadow-sm animate-fade-in">
           {/* Provider Selector */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-300 font-semibold">Active AI Provider:</span>
+              <span className="text-xs text-slate-655 dark:text-slate-350 font-semibold">Active AI Provider:</span>
               <select
                 value={aiProvider}
                 onChange={(e) => handleSwitchProvider(e.target.value)}
-                className="glass-input py-1 px-3 text-xs w-48 bg-black/20 focus:ring-0 focus:border-white/20"
+                className="glass-input py-1 px-3 text-xs w-48 focus:ring-1 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
               >
                 <option value="gemini">Google Gemini</option>
                 <option value="openai">OpenAI ChatGPT</option>
               </select>
             </div>
-            <span className="text-[10px] text-slate-400 font-medium">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
               {aiProvider === 'openai' ? (
-                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">OpenAI API Keys</a></>
+                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-80">OpenAI API Keys</a></>
               ) : (
-                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">Google AI Studio</a></>
+                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-80">Google AI Studio</a></>
               )}
             </span>
           </div>
@@ -369,9 +369,8 @@ export default function ChatPage() {
           {/* Key Configuration Inputs */}
           {aiProvider === 'openai' ? (
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Settings className="h-4 w-4 text-primary-400 animate-spin-slow" />
-                OpenAI ChatGPT Co-pilot Config
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                OpenAI API Key Configuration
               </h3>
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
@@ -384,7 +383,7 @@ export default function ChatPage() {
                       setApiKeyError('');
                     }}
                     placeholder={savedOpenAiKey ? "••••••••••••••••••••••••••••••••" : "Enter OpenAI API Key (sk-...)"}
-                    className="w-full glass-input text-xs py-2 px-3 bg-black/20"
+                    className="w-full glass-input text-xs py-2 px-3"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -392,15 +391,15 @@ export default function ChatPage() {
                     type="button"
                     onClick={handleSaveOpenAiKey}
                     disabled={testingKey}
-                    className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
+                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
                   >
-                    {testingKey ? 'Verifying...' : 'Save Key'}
+                    {testingKey ? 'Saving...' : 'Save Key'}
                   </button>
                   {savedOpenAiKey && (
                     <button
                       type="button"
                       onClick={handleClearOpenAiKey}
-                      className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                      className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
                     >
                       Clear Key
                     </button>
@@ -410,9 +409,8 @@ export default function ChatPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Settings className="h-4 w-4 text-primary-400 animate-spin-slow" />
-                Google Gemini Co-pilot Config
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                Google Gemini API Key Configuration
               </h3>
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
@@ -425,7 +423,7 @@ export default function ChatPage() {
                       setApiKeyError('');
                     }}
                     placeholder={savedGeminiKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
-                    className="w-full glass-input text-xs py-2 px-3 bg-black/20"
+                    className="w-full glass-input text-xs py-2 px-3"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -433,15 +431,15 @@ export default function ChatPage() {
                     type="button"
                     onClick={handleSaveGeminiKey}
                     disabled={testingKey}
-                    className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
+                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
                   >
-                    {testingKey ? 'Verifying...' : 'Save Key'}
+                    {testingKey ? 'Saving...' : 'Save Key'}
                   </button>
                   {savedGeminiKey && (
                     <button
                       type="button"
                       onClick={handleClearGeminiKey}
-                      className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                      className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
                     >
                       Clear Key
                     </button>
@@ -452,55 +450,55 @@ export default function ChatPage() {
           )}
           
           {apiKeySuccess && (
-            <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
               <Check className="h-3.5 w-3.5" /> {apiKeySuccess}
             </p>
           )}
           {apiKeyError && (
-            <p className="text-xs text-rose-400 font-semibold flex items-center gap-1">
+            <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
               <AlertCircle className="h-3.5 w-3.5" /> {apiKeyError}
             </p>
           )}
           
-          <p className="text-[10px] text-slate-500">
-            Your key resides in browser memory and queries the API directly. It is never exposed or logged.
+          <p className="text-[10px] text-slate-455 dark:text-slate-500">
+            API keys are saved in local storage to authenticate requests dynamically. They are never logged on the server.
           </p>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-2.5 p-3.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
-          <AlertCircle className="h-4 w-4" />
+        <div className="flex items-center gap-2.5 p-3 mb-3 rounded-lg bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs">
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Chat Messages Box */}
-      <div className="flex-1 overflow-y-auto glass-panel border border-white/5 rounded-2xl p-6 space-y-4 mb-4">
+      <div className="flex-1 overflow-y-auto glass-panel border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-5 mb-4">
         
         {messages.map((msg, idx) => {
           const isBot = msg.sender === 'bot';
           return (
-            <div key={idx} className={`flex items-start gap-3 ${isBot ? '' : 'flex-row-reverse'}`}>
+            <div key={idx} className={`flex items-start gap-3.5 ${isBot ? '' : 'flex-row-reverse'}`}>
               
               {/* Avatar */}
               <div className={`
-                h-8.5 w-8.5 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 shadow-sm
+                h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0 border
                 ${isBot 
-                  ? 'bg-gradient-to-tr from-primary-600 to-indigo-600' 
-                  : 'bg-gradient-to-tr from-emerald-600 to-teal-600'}
+                  ? 'bg-slate-100 border-slate-200 text-slate-700 dark:bg-slate-850 dark:border-slate-700 dark:text-slate-200' 
+                  : 'bg-indigo-50 border-indigo-100 text-indigo-700 dark:bg-indigo-950/30 dark:border-indigo-900/40 dark:text-indigo-300'}
               `}>
-                {isBot ? <Bot className="h-4.5 w-4.5" /> : <User className="h-4.5 w-4.5" />}
+                {isBot ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
               </div>
 
               {/* Message Bubble */}
               <div className={`
-                p-4 rounded-2xl max-w-xl text-slate-200 border text-sm leading-relaxed
+                p-4 rounded-xl max-w-xl text-slate-800 dark:text-slate-250 border text-sm leading-relaxed
                 ${isBot 
-                  ? 'bg-white/[0.02] border-white/5' 
-                  : 'bg-primary-500/10 border-primary-500/20 text-slate-100'}
+                  ? 'bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 shadow-sm' 
+                  : 'bg-indigo-600 border-indigo-700 text-white shadow-sm'}
               `}>
-                {isBot ? formatText(msg.text) : msg.text}
+                {isBot ? formatText(msg.text) : <p className="whitespace-pre-wrap">{msg.text}</p>}
               </div>
 
             </div>
@@ -509,14 +507,14 @@ export default function ChatPage() {
 
         {/* AI Typing Indicator */}
         {loading && (
-          <div className="flex items-start gap-3">
-            <div className="h-8.5 w-8.5 rounded-full bg-gradient-to-tr from-primary-600 to-indigo-600 flex items-center justify-center text-white flex-shrink-0">
-              <Bot className="h-4.5 w-4.5" />
+          <div className="flex items-start gap-3.5">
+            <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 dark:bg-slate-850 dark:border-slate-700 dark:text-slate-200 flex items-center justify-center font-bold text-xs flex-shrink-0">
+              <Bot className="h-4 w-4" />
             </div>
-            <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-slate-400 animate-bounce"></div>
-              <div className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+            <div className="bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 p-4 rounded-xl flex items-center gap-1.5 shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.15s' }}></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.3s' }}></div>
             </div>
           </div>
         )}
@@ -530,16 +528,16 @@ export default function ChatPage() {
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder={selectedNoteId ? "Ask AI Study Buddy about this guide..." : "Ask AI Study Buddy anything..."}
-          className="flex-1 glass-input focus:ring-1 focus:ring-primary-500/30"
+          placeholder={selectedNoteId ? "Ask AI about this study guide..." : "Ask general study questions..."}
+          className="flex-1 glass-input focus:ring-1 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-850"
           disabled={loading}
         />
         <button
           type="submit"
           disabled={loading || !inputMessage.trim()}
-          className="px-5 py-3 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold flex items-center justify-center transition-all disabled:opacity-50 shadow-md shadow-primary-600/15"
+          className="px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold flex items-center justify-center transition-all disabled:opacity-50 shadow-sm"
         >
-          <Send className="h-4.5 w-4.5" />
+          <Send className="h-4 w-4" />
         </button>
       </form>
 

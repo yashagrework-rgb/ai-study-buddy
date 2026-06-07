@@ -1,16 +1,12 @@
 package com.studybuddy.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.genai.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.ai.google.genai.GoogleGenAiChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -21,63 +17,30 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    @Value("${gemini.api.url}")
-    private String apiUrl;
-
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     public String generateContent(String prompt) {
         return generateContent(prompt, null);
     }
 
     public String generateContent(String prompt, String customApiKey) {
         String keyToUse = (customApiKey != null && !customApiKey.trim().isEmpty()) ? customApiKey : apiKey;
-        if (keyToUse == null || keyToUse.trim().isEmpty() || keyToUse.equals("YOUR_GEMINI_KEY")) {
-            logger.warn("GEMINI_API_KEY is not configured. Returning mock response.");
+        if (keyToUse == null || keyToUse.trim().isEmpty() || keyToUse.equals("YOUR_GEMINI_KEY") || keyToUse.contains("dummy")) {
+            logger.warn("GEMINI_API_KEY is not configured or is placeholder. Returning mock response.");
             return getMockResponse(prompt);
         }
 
         try {
-            String url = apiUrl + "?key=" + keyToUse;
-
-            // Construct Request Payload
-            Map<String, Object> textPart = new HashMap<>();
-            textPart.put("text", prompt);
-
-            Map<String, Object> parts = new HashMap<>();
-            parts.put("parts", Collections.singletonList(textPart));
-
-            Map<String, Object> contents = new HashMap<>();
-            contents.put("contents", Collections.singletonList(parts));
-
-            // Set Headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(contents, headers);
-
-            // Execute POST request
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
+            Client client = Client.builder().apiKey(keyToUse).build();
+            GoogleGenAiChatModel chatModel = GoogleGenAiChatModel.builder()
+                    .genAiClient(client)
+                    .defaultOptions(GoogleGenAiChatOptions.builder()
+                            .model("gemini-2.0-flash-lite")
+                            .temperature(0.7)
+                            .build())
+                    .build();
             
-            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                // Parse response JSON to extract the text content
-                JsonNode root = objectMapper.readTree(responseEntity.getBody());
-                JsonNode textNode = root.path("candidates")
-                        .path(0)
-                        .path("content")
-                        .path("parts")
-                        .path(0)
-                        .path("text");
-                
-                if (!textNode.isMissingNode()) {
-                    return textNode.asText();
-                }
-            }
-            throw new RuntimeException("Empty response from Gemini API");
-
+            return chatModel.call(prompt);
         } catch (Exception e) {
-            logger.error("Error communicating with Gemini API: {}. Falling back to offline mock response.", e.getMessage());
+            logger.error("Error communicating with Gemini API via Spring AI: {}. Falling back to offline mock response.", e.getMessage());
             return getMockResponse(prompt);
         }
     }

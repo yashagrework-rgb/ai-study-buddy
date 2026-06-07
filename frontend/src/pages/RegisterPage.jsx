@@ -44,52 +44,48 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark-950 px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[#faf9f6] dark:bg-[#0c0e12] px-4 relative overflow-hidden transition-colors duration-300">
       
-      {/* Background gradients */}
-      <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full bg-primary-600/10 blur-[80px]"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-indigo-600/10 blur-[80px]"></div>
-
       <div className="w-full max-w-md z-10">
         
         {/* Logo Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="p-2.5 bg-primary-500/10 rounded-xl border border-primary-500/20">
-              <GraduationCap className="h-8 w-8 text-primary-400" />
+            <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+              <GraduationCap className="h-6 w-6 text-slate-800 dark:text-slate-200" />
             </div>
           </Link>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">Create Account</h2>
-          <p className="text-sm text-slate-400 mt-2">Get your own AI study assistant in seconds</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Create workspace</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-455 mt-1.5">Get your personalized StudyBuddy in seconds</p>
         </div>
 
         {/* Register Box */}
-        <div className="glass-panel p-8 rounded-2xl border border-white/5 shadow-glass">
+        <div className="glass-panel p-8 rounded-xl">
           
           {error && (
-            <div className="flex items-center gap-3 p-4 mb-6 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <div className="flex items-center gap-3 p-3.5 mb-6 rounded-lg bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-455 text-xs sm:text-sm">
+              <AlertCircle className="h-4.5 w-4.5 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="flex items-center gap-3 p-4 mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm animate-pulse">
-              <CheckCircle className="h-5 w-5 flex-shrink-0" />
+            <div className="flex items-center gap-3 p-3.5 mb-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-455 text-xs sm:text-sm animate-pulse">
+              <CheckCircle className="h-4.5 w-4.5 flex-shrink-0" />
               <span>{success}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             
             {/* Full Name Field */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
                 Full Name
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
-                  <User className="h-5 w-5" />
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-450 dark:text-slate-500">
+                  <User className="h-4.5 w-4.5" />
                 </span>
                 <input
                   type="text"
@@ -104,12 +100,12 @@ export default function RegisterPage() {
 
             {/* Email Field */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
-                  <Mail className="h-5 w-5" />
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-455 dark:text-slate-550">
+                  <Mail className="h-4.5 w-4.5" />
                 </span>
                 <input
                   type="email"
@@ -124,12 +120,12 @@ export default function RegisterPage() {
 
             {/* Password Field */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
                 Password
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">
-                  <Lock className="h-5 w-5" />
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-455 dark:text-slate-550">
+                  <Lock className="h-4.5 w-4.5" />
                 </span>
                 <input
                   type="password"
@@ -146,17 +142,17 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 font-bold text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 rounded-xl transition-all shadow-lg shadow-primary-600/20 flex items-center justify-center gap-2 group disabled:opacity-50"
+              className="w-full py-2.5 px-4 font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-all flex items-center justify-center gap-2 group disabled:opacity-50 text-sm shadow-sm"
             >
               {loading ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Creating account...
                 </>
               ) : (
                 <>
-                  Sign Up
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  Create Account
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </>
               )}
             </button>
@@ -164,9 +160,9 @@ export default function RegisterPage() {
           </form>
 
           {/* Redirect to Login */}
-          <div className="mt-8 pt-6 border-t border-white/5 text-center text-sm text-slate-400">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-primary-400 hover:text-primary-300 transition-colors">
+            <Link to="/login" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
               Log in instead
             </Link>
           </div>

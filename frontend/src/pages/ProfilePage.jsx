@@ -8,7 +8,7 @@ import {
   Award, 
   LogOut,
   Calendar,
-  Sparkles
+  Settings
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -109,103 +109,96 @@ export default function ProfilePage({ user }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-slate-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-2xl mx-auto space-y-8 animate-fade-in text-slate-800 dark:text-slate-200">
       
       {/* Profile Card Header */}
-      <div className="glass-panel p-6 rounded-3xl border border-white/5 relative overflow-hidden flex flex-col items-center text-center space-y-4 shadow-glass">
+      <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center space-y-4 shadow-sm bg-white dark:bg-[#111622]">
         
-        {/* Glow backdrop decoration */}
-        <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-600/10 blur-2xl"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-indigo-600/10 blur-2xl"></div>
-
         {/* Big Avatar */}
         <div className="relative">
-          <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-primary-600 to-indigo-600 flex items-center justify-center font-bold text-white text-3xl shadow-lg border-2 border-white/10 relative z-10">
+          <div className="h-24 w-24 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold text-3xl border border-slate-250 dark:border-slate-700 shadow-sm">
             {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-          </div>
-          <div className="absolute -bottom-1 -right-1 p-1.5 bg-primary-500 rounded-full text-white border-2 border-dark-950 z-20" title="AI Co-pilot Active">
-            <Sparkles className="h-4 w-4" />
           </div>
         </div>
 
         <div className="space-y-1 relative z-10">
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">{user?.name || 'Student'}</h2>
-          <p className="text-xs text-primary-400 font-semibold uppercase tracking-wider flex items-center justify-center gap-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{user?.name || 'Student'}</h2>
+          <p className="text-[10px] text-indigo-650 dark:text-indigo-400 font-bold uppercase tracking-wider">
             Student Account
           </p>
         </div>
 
-        <div className="w-full border-t border-white/5 pt-4 space-y-2 text-xs text-slate-400 relative z-10 flex flex-col items-center">
+        <div className="w-full border-t border-slate-200 dark:border-slate-800 pt-4 space-y-2 text-xs text-slate-500 dark:text-slate-400 flex flex-col items-center">
           <div className="flex items-center gap-2">
-            <Mail className="h-4 w-4 text-slate-500" />
+            <Mail className="h-4 w-4 text-slate-400" />
             <span>{user?.email || 'student@university.edu'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-slate-500" />
-            <span>Registered as learning companion</span>
+            <Calendar className="h-4 w-4 text-slate-400" />
+            <span>Registered as workspace member</span>
           </div>
         </div>
 
       </div>
 
       {/* Learning Achievements Section */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-bold text-white">Learning Metrics Overview</h3>
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider text-slate-400 dark:text-slate-500 text-[10px]">Learning Metrics Overview</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
           {/* Box 1 */}
-          <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 text-center space-y-1.5">
-            <Clock className="h-5 w-5 text-indigo-400 mx-auto" />
-            <span className="text-2xl font-bold text-white block">
+          <div className="p-4 rounded-lg bg-slate-50 dark:bg-[#151b29] border border-slate-200 dark:border-slate-850 text-center space-y-1.5 shadow-sm">
+            <Clock className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto" />
+            <span className="text-xl font-bold text-slate-900 dark:text-white block">
               {progress ? progress.totalStudyTime : 0} mins
             </span>
-            <span className="text-[10px] text-slate-500 uppercase font-semibold">Total Study Time</span>
+            <span className="text-[10px] text-slate-450 dark:text-slate-500 uppercase font-semibold">Total Study Time</span>
           </div>
 
           {/* Box 2 */}
-          <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 text-center space-y-1.5">
-            <BrainCircuit className="h-5 w-5 text-emerald-400 mx-auto" />
-            <span className="text-2xl font-bold text-white block">
+          <div className="p-4 rounded-lg bg-slate-50 dark:bg-[#151b29] border border-slate-200 dark:border-slate-850 text-center space-y-1.5 shadow-sm">
+            <BrainCircuit className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            <span className="text-xl font-bold text-slate-900 dark:text-white block">
               {progress ? progress.quizzesCompleted : 0}
             </span>
-            <span className="text-[10px] text-slate-500 uppercase font-semibold">Quizzes Taken</span>
+            <span className="text-[10px] text-slate-455 dark:text-slate-500 uppercase font-semibold">Quizzes Taken</span>
           </div>
 
           {/* Box 3 */}
-          <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 text-center space-y-1.5">
-            <Award className="h-5 w-5 text-amber-400 mx-auto" />
-            <span className="text-2xl font-bold text-white block">
+          <div className="p-4 rounded-lg bg-slate-50 dark:bg-[#151b29] border border-slate-200 dark:border-slate-850 text-center space-y-1.5 shadow-sm">
+            <Award className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto" />
+            <span className="text-xl font-bold text-slate-900 dark:text-white block">
               {progress ? progress.averageScore : '0.0'}%
             </span>
-            <span className="text-[10px] text-slate-500 uppercase font-semibold">Average Grade</span>
+            <span className="text-[10px] text-slate-455 dark:text-slate-500 uppercase font-semibold">Average Grade</span>
           </div>
 
         </div>
       </div>
 
-      {/* AI Co-pilot Configuration Section */}
-      <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-6 relative overflow-hidden shadow-glass bg-white/[0.02]">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary-400" />
-          AI Co-pilot Configuration
+      {/* AI Configuration Section */}
+      <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-800 space-y-5 bg-white dark:bg-[#111622] shadow-sm">
+        <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <Settings className="h-4.5 w-4.5 text-slate-600 dark:text-slate-300" />
+          AI Provider API Keys
         </h3>
-        <p className="text-xs text-slate-400">
-          Configure personal API keys to activate real, detailed, human-like answers for study lounge chats, notes summarization, dynamic MCQ quizzes, and 7-day study plans.
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Configure API keys to authenticate AI queries for summaries, practice quiz generation, and chat responses.
         </p>
 
         {/* Gemini Panel */}
-        <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 space-y-3">
+        <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-bold text-white">Google Gemini API</h4>
-            <span className="text-[10px] text-slate-500">
-              Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">Google AI Studio</a>
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white">Google Gemini API</h4>
+            <span className="text-[10px] text-slate-450 dark:text-slate-500">
+              Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">Google AI Studio</a>
             </span>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -218,14 +211,14 @@ export default function ProfilePage({ user }) {
                 setGeminiErrorMsg('');
               }}
               placeholder={savedGeminiKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
-              className="flex-1 glass-input text-xs py-2 px-3 bg-black/20 border border-white/10"
+              className="flex-1 glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
             />
             
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleSaveGeminiKey}
-                className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all"
+                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-all shadow-sm"
               >
                 Save Key
               </button>
@@ -233,23 +226,23 @@ export default function ProfilePage({ user }) {
                 <button
                   type="button"
                   onClick={handleClearGeminiKey}
-                  className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                  className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
                 >
                   Clear
                 </button>
               )}
             </div>
           </div>
-          {geminiSuccessMsg && <p className="text-xs text-emerald-400 font-semibold">{geminiSuccessMsg}</p>}
-          {geminiErrorMsg && <p className="text-xs text-rose-400 font-semibold">{geminiErrorMsg}</p>}
+          {geminiSuccessMsg && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{geminiSuccessMsg}</p>}
+          {geminiErrorMsg && <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{geminiErrorMsg}</p>}
         </div>
 
         {/* OpenAI Panel */}
-        <div className="p-4 rounded-2xl bg-white/[0.01] border border-white/5 space-y-3">
+        <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-bold text-white">OpenAI ChatGPT API</h4>
-            <span className="text-[10px] text-slate-500">
-              Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary-400 underline hover:text-primary-300">OpenAI API Keys</a>
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white">OpenAI ChatGPT API</h4>
+            <span className="text-[10px] text-slate-450 dark:text-slate-500">
+              Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-650 dark:text-indigo-400 underline hover:opacity-85">OpenAI API Keys</a>
             </span>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -262,14 +255,14 @@ export default function ProfilePage({ user }) {
                 setOpenAiErrorMsg('');
               }}
               placeholder={savedOpenAiKey ? "••••••••••••••••••••••••••••••••" : "Enter OpenAI API Key (sk-...)"}
-              className="flex-1 glass-input text-xs py-2 px-3 bg-black/20 border border-white/10"
+              className="flex-1 glass-input text-xs py-2 px-3 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
             />
             
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleSaveOpenAiKey}
-                className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold text-xs transition-all"
+                className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-all shadow-sm"
               >
                 Save Key
               </button>
@@ -277,18 +270,18 @@ export default function ProfilePage({ user }) {
                 <button
                   type="button"
                   onClick={handleClearOpenAiKey}
-                  className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-400 transition-all"
+                  className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
                 >
                   Clear
                 </button>
               )}
             </div>
           </div>
-          {openAiSuccessMsg && <p className="text-xs text-emerald-400 font-semibold">{openAiSuccessMsg}</p>}
-          {openAiErrorMsg && <p className="text-xs text-rose-400 font-semibold">{openAiErrorMsg}</p>}
+          {openAiSuccessMsg && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">{openAiSuccessMsg}</p>}
+          {openAiErrorMsg && <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{openAiErrorMsg}</p>}
         </div>
 
-        <p className="text-[10px] text-slate-500">
+        <p className="text-[10px] text-slate-455 dark:text-slate-500">
           Keys are stored safely in browser storage and synchronized to your account database.
         </p>
       </div>
@@ -297,7 +290,7 @@ export default function ProfilePage({ user }) {
       <div className="pt-2">
         <button
           onClick={handleLogout}
-          className="w-full py-3.5 px-4 rounded-xl border border-rose-500/20 hover:bg-rose-500/10 text-sm font-semibold text-rose-400 hover:text-rose-300 transition-all flex items-center justify-center gap-2"
+          className="w-full py-2.5 px-4 rounded-lg border border-rose-205 hover:bg-rose-50 text-rose-600 dark:border-rose-900/30 dark:hover:bg-rose-950/20 dark:text-rose-400 text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2"
         >
           <LogOut className="h-4.5 w-4.5" />
           Logout from StudyBuddy

@@ -1,15 +1,11 @@
 package com.studybuddy.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -17,53 +13,28 @@ import java.util.*;
 public class OpenAiService {
     private static final Logger logger = LoggerFactory.getLogger(OpenAiService.class);
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-
     public String generateContent(String prompt, String apiKey) {
-        if (apiKey == null || apiKey.trim().isEmpty()) {
-            logger.warn("OpenAI API key is missing. Returning fallback.");
-            return "ChatGPT Error: OpenAI API Key is not configured. Please supply an API key in settings.";
+        if (apiKey == null || apiKey.trim().isEmpty() || apiKey.contains("dummy")) {
+            logger.warn("OpenAI API key is missing or placeholder. Returning fallback.");
+            return getMockResponse(prompt);
         }
 
         try {
-            // Construct Request Payload
-            Map<String, Object> message = new HashMap<>();
-            message.put("role", "user");
-            message.put("content", prompt);
+            OpenAiApi openAiApi = OpenAiApi.builder()
+                    .apiKey(apiKey.trim())
+                    .build();
+            
+            OpenAiChatModel chatModel = OpenAiChatModel.builder()
+                    .openAiApi(openAiApi)
+                    .defaultOptions(OpenAiChatOptions.builder()
+                            .model("gpt-4o-mini")
+                            .temperature(0.7)
+                            .build())
+                    .build();
 
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("model", "gpt-4o-mini");
-            payload.put("messages", Collections.singletonList(message));
-            payload.put("temperature", 0.7);
-
-            // Set Headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "Bearer " + apiKey.trim());
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
-
-            // Execute POST request
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(OPENAI_URL, entity, String.class);
-
-            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                // Parse response JSON to extract the text content
-                JsonNode root = objectMapper.readTree(responseEntity.getBody());
-                JsonNode textNode = root.path("choices")
-                        .path(0)
-                        .path("message")
-                        .path("content");
-
-                if (!textNode.isMissingNode()) {
-                    return textNode.asText();
-                }
-            }
-            throw new RuntimeException("Empty response from OpenAI API");
-
+            return chatModel.call(prompt);
         } catch (Exception e) {
-            logger.error("Error communicating with OpenAI API: {}. Falling back to offline mock response.", e.getMessage());
+            logger.error("Error communicating with OpenAI API via Spring AI: {}. Falling back to offline mock response.", e.getMessage());
             return getMockResponse(prompt);
         }
     }

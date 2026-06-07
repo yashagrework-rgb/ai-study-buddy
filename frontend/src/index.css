@@ -4,40 +4,70 @@
 
 @layer base {
   body {
-    background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 70%);
+    background: #faf9f6;
+    @apply text-slate-800 transition-colors duration-300 selection:bg-primary-500/20 selection:text-primary-800;
+  }
+  
+  html.dark body {
+    background: #090d16;
     @apply text-slate-200 selection:bg-primary-500/30 selection:text-primary-200;
   }
 }
 
-/* Glassmorphism Styles */
+/* Minimalist Card & Panel Styles (Replaces Glassmorphism) */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+html.dark .glass-panel {
+  background: #111622;
+  border: 1px solid #1e293b;
+  box-shadow: none;
 }
 
 .glass-panel-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel-hover:hover {
-  background: rgba(15, 23, 42, 0.6);
-  border-color: rgba(139, 92, 246, 0.25);
-  box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.15);
-  transform: translateY(-2px);
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transform: translateY(-1px);
+}
+
+html.dark .glass-panel-hover:hover {
+  background: #151b29;
+  border-color: #334155;
+  box-shadow: none;
+  transform: translateY(-1px);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
+html.dark .glass-card {
+  background: #161c2a;
+  border: 1px solid #1e293b;
+}
+
+/* Crisp Input Fields */
 .glass-input {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  @apply focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all outline-none rounded-lg px-4 py-2.5 text-slate-100 placeholder-slate-500;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  @apply focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all outline-none rounded-lg px-4 py-2.5 placeholder-slate-400 text-sm;
+}
+
+html.dark .glass-input {
+  background: #090d16;
+  border: 1px solid #1e293b;
+  color: #f1f5f9;
+  @apply placeholder-slate-500;
 }
 
 /* Enforce padding-left when icons are embedded inside glass-inputs to prevent overlap */
@@ -48,59 +78,100 @@
   padding-left: 2.5rem !important;
 }
 
-/* Custom Animations */
-@keyframes pulse-slow {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.65;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
+/* Animations - Clean & Subtle */
 .animate-pulse-slow {
-  animation: pulse-slow 8s infinite ease-in-out;
+  opacity: 0.8;
 }
 
 .animate-float {
-  animation: float 5s infinite ease-in-out;
+  transform: none;
 }
 
-/* Scrollbar customization */
+/* Scrollbar Customization (Crisp & Thin) */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.2);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.25);
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
+  background: #94a3b8;
 }
 
-/* Text glow */
-.text-glow {
-  text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
 }
 
-.text-glow-emerald {
-  text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
+
+/* Text glow removal (Handcrafted design doesn't use neon shadows) */
+.text-glow,
+html.dark .text-glow,
+.text-glow-emerald,
+html.dark .text-glow-emerald {
+  text-shadow: none !important;
+}
+
+/* ======================================================================
+   LIGHT THEME STYLING OVERRIDES (CLEAN SYSTEM MATTE)
+   ====================================================================== */
+
+
+html:not(.dark) .text-slate-100 {
+  color: #0f172a !important; /* slate-900 */
+}
+
+html:not(.dark) .text-slate-200 {
+  color: #1e293b !important; /* slate-800 */
+}
+
+html:not(.dark) .text-slate-300 {
+  color: #334155 !important; /* slate-700 */
+}
+
+html:not(.dark) .text-slate-400 {
+  color: #475569 !important; /* slate-600 */
+}
+
+html:not(.dark) .border-white\/5,
+html:not(.dark) .border-white\/10 {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .bg-white\/\[0\.04\],
+html:not(.dark) .bg-white\/\[0\.01\],
+html:not(.dark) .bg-white\/\[0\.02\],
+html:not(.dark) .bg-white\/5 {
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) aside,
+html:not(.dark) header {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) aside nav a {
+  color: #475569 !important; /* slate-600 */
+}
+
+html:not(.dark) aside nav a:hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) aside nav a.bg-primary-600 {
+  color: #ffffff !important;
+  background-color: #6d28d9 !important;
+}
+
