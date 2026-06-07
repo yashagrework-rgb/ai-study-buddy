@@ -10,7 +10,11 @@ import {
   Calendar,
   AlertCircle,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  Settings,
+  Key,
+  Check,
+  Zap
 } from 'lucide-react';
 import api from '../services/api';
 import axios from 'axios';
@@ -25,26 +29,97 @@ export default function ChatPage() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: "Hello! I am your AI Study Buddy. Select a study guide above to train me on your notes. I will generate a comprehensive summary, map out concepts, or create study schedules based on your material."
+      text: "Hello! I am your AI Study Buddy. Select a study guide above to train me on your notes, or just ask any general study questions. I can explain complex terms, summarize material, or build study plans!"
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loadingSeconds, setLoadingSeconds] = useState(0);
   const [error, setError] = useState('');
-  const loadingTimerRef = useRef(null);
-
-  const startLoadingTimer = () => {
-    setLoadingSeconds(0);
-    if (loadingTimerRef.current) clearInterval(loadingTimerRef.current);
-    loadingTimerRef.current = setInterval(() => setLoadingSeconds(s => s + 1), 1000);
-  };
-  const stopLoadingTimer = () => {
-    if (loadingTimerRef.current) clearInterval(loadingTimerRef.current);
-    setLoadingSeconds(0);
-  };
   
+  const [showSettings, setShowSettings] = useState(false);
+  const [aiProvider, setAiProvider] = useState(localStorage.getItem('ai_provider') || 'gemini');
+  const [savedGeminiKey, setSavedGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [tempGeminiKey, setTempGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [savedOpenAiKey, setSavedOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
+  const [tempOpenAiKey, setTempOpenAiKey] = useState(localStorage.getItem('openai_api_key') || '');
+  const [testingKey, setTestingKey] = useState(false);
+  const [apiKeySuccess, setApiKeySuccess] = useState('');
+  const [apiKeyError, setApiKeyError] = useState('');
 
+  const handleSwitchProvider = (newProvider) => {
+    localStorage.setItem('ai_provider', newProvider);
+    setAiProvider(newProvider);
+    setApiKeySuccess('');
+    setApiKeyError('');
+  };
+
+  const handleSaveGeminiKey = async () => {
+    if (!tempGeminiKey.trim()) {
+      setApiKeyError('Please enter a Gemini API key.');
+      return;
+    }
+    setTestingKey(true);
+    setApiKeySuccess('');
+    setApiKeyError('');
+    try {
+      localStorage.setItem('gemini_api_key', tempGeminiKey.trim());
+      localStorage.setItem('gemini_model', 'models/gemini-2.0-flash-lite');
+      setSavedGeminiKey(tempGeminiKey.trim());
+      setApiKeySuccess('Gemini API key saved successfully!');
+      await api.put('/api/ai/api-key', { geminiApiKey: tempGeminiKey.trim() });
+    } catch (err) {
+      console.error(err);
+      setApiKeyError('Failed to save Gemini key in database.');
+    } finally {
+      setTestingKey(false);
+    }
+  };
+
+  const handleSaveOpenAiKey = async () => {
+    if (!tempOpenAiKey.trim()) {
+      setApiKeyError('Please enter an OpenAI API key.');
+      return;
+    }
+    setTestingKey(true);
+    setApiKeySuccess('');
+    setApiKeyError('');
+    try {
+      localStorage.setItem('openai_api_key', tempOpenAiKey.trim());
+      setSavedOpenAiKey(tempOpenAiKey.trim());
+      setApiKeySuccess('OpenAI API key saved successfully!');
+      await api.put('/api/ai/api-key', { openAiApiKey: tempOpenAiKey.trim() });
+    } catch (err) {
+      console.error(err);
+      setApiKeyError('Failed to save OpenAI key in database.');
+    } finally {
+      setTestingKey(false);
+    }
+  };
+
+  const handleClearGeminiKey = async () => {
+    localStorage.removeItem('gemini_api_key');
+    localStorage.removeItem('gemini_model');
+    setSavedGeminiKey('');
+    setTempGeminiKey('');
+    setApiKeySuccess('Gemini API key cleared successfully.');
+    try {
+      await api.put('/api/ai/api-key', { geminiApiKey: null });
+    } catch (dbErr) {
+      console.error('Failed to clear Gemini key in database:', dbErr);
+    }
+  };
+
+  const handleClearOpenAiKey = async () => {
+    localStorage.removeItem('openai_api_key');
+    setSavedOpenAiKey('');
+    setTempOpenAiKey('');
+    setApiKeySuccess('OpenAI API key cleared successfully.');
+    try {
+      await api.put('/api/ai/api-key', { openAiApiKey: null });
+    } catch (dbErr) {
+      console.error('Failed to clear OpenAI key in database:', dbErr);
+    }
+  };
 
   const chatEndRef = useRef(null);
 
@@ -78,7 +153,6 @@ export default function ChatPage() {
     // Add user message to state
     setMessages(prev => [...prev, { sender: 'user', text: userText }]);
     setLoading(true);
-    startLoadingTimer();
 
     try {
       const payload = {
@@ -91,10 +165,9 @@ export default function ChatPage() {
     } catch (err) {
       console.error(err);
       setError('Error communicating with AI Study Buddy. Verify server configuration.');
-      setMessages(prev => [...prev, { sender: 'bot', text: "Sorry, I encountered an error. Please verify that your backend and local Ollama instance are running and reachable." }]);
+      setMessages(prev => [...prev, { sender: 'bot', text: "Sorry, I encountered an error. Please verify that your backend and Gemini API keys are configured." }]);
     } finally {
       setLoading(false);
-      stopLoadingTimer();
     }
   };
 
@@ -107,7 +180,6 @@ export default function ChatPage() {
     setError('');
     setMessages(prev => [...prev, { sender: 'user', text: "Summarize this study guide for me." }]);
     setLoading(true);
-    startLoadingTimer();
 
     try {
       const response = await api.post('/api/ai/summarize', {
@@ -119,7 +191,6 @@ export default function ChatPage() {
       setError('Failed to generate summary.');
     } finally {
       setLoading(false);
-      stopLoadingTimer();
     }
   };
 
@@ -132,7 +203,6 @@ export default function ChatPage() {
     setError('');
     setMessages(prev => [...prev, { sender: 'user', text: "Build a 7-day study plan from this material." }]);
     setLoading(true);
-    startLoadingTimer();
 
     try {
       const response = await api.post('/api/ai/study-plan', {
@@ -145,7 +215,6 @@ export default function ChatPage() {
       setError('Failed to generate study plan.');
     } finally {
       setLoading(false);
-      stopLoadingTimer();
     }
   };
 
@@ -213,8 +282,8 @@ export default function ChatPage() {
             <Bot className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Summarise Notes Workspace</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Generate summaries, study plans, or ask questions about your notes</p>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Study Chat Workspace</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Ask questions and review study guide context</p>
           </div>
         </div>
 
@@ -253,11 +322,149 @@ export default function ChatPage() {
             <Calendar className="h-3.5 w-3.5 opacity-80" /> Study Plan
           </button>
 
-
+          <button
+            type="button"
+            onClick={() => setShowSettings(!showSettings)}
+            className={`px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 text-xs font-bold ${
+              (aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100/50' 
+                : 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100/50'
+            }`}
+            title="Configure AI API Keys"
+          >
+            <Settings className="h-3.5 w-3.5" />
+            {(aiProvider === 'openai' ? savedOpenAiKey : savedGeminiKey) 
+              ? `${aiProvider === 'openai' ? 'OpenAI' : 'Gemini'} Live` 
+              : 'AI Keys Config'}
+          </button>
 
         </div>
 
       </div>
+
+      {showSettings && (
+        <div className="glass-panel p-4 rounded-xl border border-slate-200 dark:border-slate-800 mb-4 space-y-4 shadow-sm animate-fade-in">
+          {/* Provider Selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-655 dark:text-slate-350 font-semibold">Active AI Provider:</span>
+              <select
+                value={aiProvider}
+                onChange={(e) => handleSwitchProvider(e.target.value)}
+                className="glass-input py-1 px-3 text-xs w-48 focus:ring-1 bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800"
+              >
+                <option value="gemini">Google Gemini</option>
+                <option value="openai">OpenAI ChatGPT</option>
+              </select>
+            </div>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+              {aiProvider === 'openai' ? (
+                <>Get key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-80">OpenAI API Keys</a></>
+              ) : (
+                <>Get key at <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 underline hover:opacity-80">Google AI Studio</a></>
+              )}
+            </span>
+          </div>
+
+          {/* Key Configuration Inputs */}
+          {aiProvider === 'openai' ? (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                OpenAI API Key Configuration
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="password"
+                    value={tempOpenAiKey}
+                    onChange={(e) => {
+                      setTempOpenAiKey(e.target.value);
+                      setApiKeySuccess('');
+                      setApiKeyError('');
+                    }}
+                    placeholder={savedOpenAiKey ? "••••••••••••••••••••••••••••••••" : "Enter OpenAI API Key (sk-...)"}
+                    className="w-full glass-input text-xs py-2 px-3"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveOpenAiKey}
+                    disabled={testingKey}
+                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
+                  >
+                    {testingKey ? 'Saving...' : 'Save Key'}
+                  </button>
+                  {savedOpenAiKey && (
+                    <button
+                      type="button"
+                      onClick={handleClearOpenAiKey}
+                      className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
+                    >
+                      Clear Key
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                Google Gemini API Key Configuration
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="password"
+                    value={tempGeminiKey}
+                    onChange={(e) => {
+                      setTempGeminiKey(e.target.value);
+                      setApiKeySuccess('');
+                      setApiKeyError('');
+                    }}
+                    placeholder={savedGeminiKey ? "••••••••••••••••••••••••••••••••" : "Enter Gemini API Key (AIzaSy...)"}
+                    className="w-full glass-input text-xs py-2 px-3"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveGeminiKey}
+                    disabled={testingKey}
+                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1 disabled:opacity-50"
+                  >
+                    {testingKey ? 'Saving...' : 'Save Key'}
+                  </button>
+                  {savedGeminiKey && (
+                    <button
+                      type="button"
+                      onClick={handleClearGeminiKey}
+                      className="px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 text-xs font-semibold text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/30 dark:text-rose-400 transition-all"
+                    >
+                      Clear Key
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {apiKeySuccess && (
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+              <Check className="h-3.5 w-3.5" /> {apiKeySuccess}
+            </p>
+          )}
+          {apiKeyError && (
+            <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
+              <AlertCircle className="h-3.5 w-3.5" /> {apiKeyError}
+            </p>
+          )}
+          
+          <p className="text-[10px] text-slate-455 dark:text-slate-500">
+            API keys are saved in local storage to authenticate requests dynamically. They are never logged on the server.
+          </p>
+        </div>
+      )}
 
       {error && (
         <div className="flex items-center gap-2.5 p-3 mb-3 rounded-lg bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs">
@@ -298,21 +505,16 @@ export default function ChatPage() {
           );
         })}
 
+        {/* AI Typing Indicator */}
         {loading && (
           <div className="flex items-start gap-3.5">
             <div className="h-8 w-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 dark:bg-slate-850 dark:border-slate-700 dark:text-slate-200 flex items-center justify-center font-bold text-xs flex-shrink-0">
               <Bot className="h-4 w-4" />
             </div>
-            <div className="bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 p-4 rounded-xl flex flex-col gap-1 shadow-sm">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.15s' }}></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.3s' }}></div>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-1">AI thinking... ({loadingSeconds}s)</span>
-              </div>
-              {loadingSeconds > 10 && (
-                <span className="text-[10px] text-slate-400 dark:text-slate-500">Ollama is generating, please wait...</span>
-              )}
+            <div className="bg-white dark:bg-[#151b29] border-slate-250/50 dark:border-slate-800/80 p-4 rounded-xl flex items-center gap-1.5 shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.15s' }}></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-650 animate-bounce" style={{ animationDelay: '0.3s' }}></div>
             </div>
           </div>
         )}

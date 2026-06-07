@@ -54,7 +54,7 @@ const AppLayout = ({ children, user, onLogout, theme, setTheme }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Notes', href: '/notes', icon: BookOpen },
-    { name: 'Summarise Notes', href: '/chat', icon: MessageSquareCode },
+    { name: 'AI Study Chat', href: '/chat', icon: MessageSquareCode },
     { name: 'Generate Quiz', href: '/quiz', icon: BrainCircuit },
     { name: 'Quiz Results', href: '/results', icon: BarChart3 },
     { name: 'Profile', href: '/profile', icon: UserIcon },
@@ -197,11 +197,25 @@ export default function App() {
 
   const handleLogin = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
+    if (userData.geminiApiKey) {
+      localStorage.setItem('gemini_api_key', userData.geminiApiKey);
+    } else {
+      localStorage.removeItem('gemini_api_key');
+    }
+    if (userData.openAiApiKey) {
+      localStorage.setItem('openai_api_key', userData.openAiApiKey);
+    } else {
+      localStorage.removeItem('openai_api_key');
+    }
     setUser(userData);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('gemini_api_key');
+    localStorage.removeItem('gemini_model');
+    localStorage.removeItem('openai_api_key');
+    localStorage.removeItem('ai_provider');
     setUser(null);
     window.location.href = '/login';
   };

@@ -17,11 +17,9 @@ export default function QuizPage() {
 
   const [notes, setNotes] = useState([]);
   const [selectedNoteId, setSelectedNoteId] = useState('');
-  const [questionCount, setQuestionCount] = useState(10);
+  const [questionCount, setQuestionCount] = useState(5);
   const [loading, setLoading] = useState(false);
-  const [loadingSeconds, setLoadingSeconds] = useState(0);
   const [error, setError] = useState('');
-  const loadingTimerRef = React.useRef(null);
 
   // Active Quiz Running States
   const [quiz, setQuiz] = useState(null);
@@ -49,8 +47,6 @@ export default function QuizPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    setLoadingSeconds(0);
-    loadingTimerRef.current = setInterval(() => setLoadingSeconds(s => s + 1), 1000);
     
     // Reset active quiz states
     setQuiz(null);
@@ -90,8 +86,6 @@ export default function QuizPage() {
       setError(err.response?.data?.message || err.message || 'Failed to generate quiz. Please ensure your study guide contains adequate text.');
     } finally {
       setLoading(false);
-      setLoadingSeconds(0);
-      if (loadingTimerRef.current) clearInterval(loadingTimerRef.current);
     }
   };
 
@@ -351,7 +345,7 @@ export default function QuizPage() {
                 2. Number of MCQ Questions
               </label>
               <div className="grid grid-cols-2 gap-4">
-                {[10, 25].map(count => (
+                {[5, 10].map(count => (
                   <button
                     key={count}
                     type="button"
@@ -376,15 +370,10 @@ export default function QuizPage() {
               className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 group disabled:opacity-50 text-sm"
             >
               {loading ? (
-                <div className="flex flex-col items-center gap-1">
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-4.5 w-4.5 animate-spin" />
-                    <span>AI Generating Quiz... ({loadingSeconds}s)</span>
-                  </div>
-                  {loadingSeconds > 10 && (
-                    <span className="text-[10px] opacity-70">Ollama is thinking, please wait up to 90s...</span>
-                  )}
-                </div>
+                <>
+                  <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                  Generating quiz using AI...
+                </>
               ) : (
                 <>
                   Generate Practice Quiz

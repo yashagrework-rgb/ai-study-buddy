@@ -476,7 +476,33 @@ public class LocalAiFallback {
                     "  }\n" +
                     "]";
         } else {
-            return generateDynamicQuizFromText(contentSource, count);
+            mockQuestionsJson = "[\n" +
+                    "  {\n" +
+                    "    \"question\": \"What is the primary language used to build a Spring Boot backend?\",\n" +
+                    "    \"options\": [\"Python\", \"Java\", \"C++\", \"JavaScript\"],\n" +
+                    "    \"answer\": \"Java\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"question\": \"Which protocol is standard for secure client-server API requests?\",\n" +
+                    "    \"options\": [\"FTP\", \"SMTP\", \"HTTPS\", \"DHCP\"],\n" +
+                    "    \"answer\": \"HTTPS\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"question\": \"What does JWT stand for in modern authentication stacks?\",\n" +
+                    "    \"options\": [\"Java Web Token\", \"JSON Web Token\", \"Joint Web Technology\", \"JPA Web Transaction\"],\n" +
+                    "    \"answer\": \"JSON Web Token\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"question\": \"In a Relational Database, which key uniquely identifies a row?\",\n" +
+                    "    \"options\": [\"Foreign Key\", \"Primary Key\", \"Candidate Key\", \"Super Key\"],\n" +
+                    "    \"answer\": \"Primary Key\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"question\": \"Which structure operates on a Last In First Out (LIFO) basis?\",\n" +
+                    "    \"options\": [\"Queue\", \"Stack\", \"Linked List\", \"Tree\"],\n" +
+                    "    \"answer\": \"Stack\"\n" +
+                    "  }\n" +
+                    "]";
         }
         
         try {
@@ -489,169 +515,5 @@ public class LocalAiFallback {
         } catch (Exception e) {
             return mockQuestionsJson;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static String generateDynamicQuizFromText(String text, int count) {
-        if (text == null || text.trim().isEmpty()) {
-            text = "General Study Material";
-        }
-        
-        List<Map<String, Object>> questionsList = new ArrayList<>();
-        
-        // Split text into sentences
-        String[] sentences = text.split("[.!?\\n]+");
-        List<String[]> definitions = new ArrayList<>();
-        List<String> allSubjects = new ArrayList<>();
-        
-        for (String sentence : sentences) {
-            String s = sentence.trim();
-            if (s.length() < 30 || s.length() > 200) continue;
-            
-            String splitWord = null;
-            if (s.contains(" refers to ")) {
-                splitWord = " refers to ";
-            } else if (s.contains(" stands for ")) {
-                splitWord = " stands for ";
-            } else if (s.contains(" is defined as ")) {
-                splitWord = " is defined as ";
-            } else if (s.contains(" is the ")) {
-                splitWord = " is the ";
-            } else if (s.contains(" is a ")) {
-                splitWord = " is a ";
-            } else if (s.contains(" is ")) {
-                splitWord = " is ";
-            } else if (s.contains(" are ")) {
-                splitWord = " are ";
-            }
-            
-            if (splitWord != null) {
-                int idx = s.indexOf(splitWord);
-                String subject = s.substring(0, idx).trim();
-                String definition = s.substring(idx + splitWord.length()).trim();
-                
-                // Keep subject short (e.g. 1 to 4 words)
-                if (subject.length() > 0 && subject.length() < 40 && subject.split("\\s+").length <= 4 && definition.length() > 10) {
-                    definitions.add(new String[]{subject, definition, splitWord});
-                    allSubjects.add(subject);
-                }
-            }
-        }
-        
-        // Generate questions from definitions
-        for (String[] def : definitions) {
-            String subject = def[0];
-            String definition = def[1];
-            String verb = def[2];
-            
-            String questionText;
-            if (verb.contains("stands for") || verb.contains("refers to") || verb.contains("defined as")) {
-                questionText = "According to the notes, what " + verb.trim() + " \"" + subject + "\"?";
-            } else {
-                String capDef = definition.substring(0, 1).toUpperCase() + definition.substring(1);
-                questionText = "Which of the following " + verb.trim() + " " + definition + "?";
-            }
-            
-            // Build options
-            List<String> options = new ArrayList<>();
-            options.add(subject);
-            
-            // Add distractors from other subjects
-            List<String> distractors = new ArrayList<>(allSubjects);
-            distractors.remove(subject);
-            Collections.shuffle(distractors);
-            
-            for (String d : distractors) {
-                if (options.size() < 4) {
-                    options.add(d);
-                }
-            }
-            
-            // Fallback generic distractors if not enough custom terms
-            String[] genericDistractors = {"Standard Concept", "Secondary Variable", "Core Framework", "System Node", "Alternative Process"};
-            for (String gd : genericDistractors) {
-                if (options.size() < 4) {
-                    options.add(gd);
-                }
-            }
-            
-            Collections.shuffle(options);
-            
-            Map<String, Object> qMap = new HashMap<>();
-            qMap.put("question", questionText);
-            qMap.put("options", options);
-            qMap.put("answer", subject);
-            
-            questionsList.add(qMap);
-        }
-        
-        // If not enough questions generated, add key terms from text
-        if (questionsList.size() < count) {
-            List<String> words = new ArrayList<>();
-            String[] rawWords = text.split("\\s+");
-            for (String w : rawWords) {
-                String clean = w.replaceAll("[^a-zA-Z]", "").trim();
-                if (clean.length() > 5 && clean.length() < 15 && Character.isUpperCase(clean.charAt(0)) && !words.contains(clean)) {
-                    words.add(clean);
-                }
-            }
-            
-            for (String word : words) {
-                if (questionsList.size() >= count) break;
-                
-                String questionText = "Which of the following key terms is prominently discussed in your study material?";
-                List<String> options = new ArrayList<>();
-                options.add(word);
-                options.add("Obsolete Legacy System");
-                options.add("Unrelated Process Thread");
-                options.add("Static Distractor Term");
-                Collections.shuffle(options);
-                
-                Map<String, Object> qMap = new HashMap<>();
-                qMap.put("question", questionText);
-                qMap.put("options", options);
-                qMap.put("answer", word);
-                questionsList.add(qMap);
-            }
-        }
-        
-        // Final fallback to generic questions if still empty
-        if (questionsList.isEmpty()) {
-            Map<String, Object> qMap = new HashMap<>();
-            qMap.put("question", "What is the primary objective of studying these custom notes?");
-            qMap.put("options", Arrays.asList("To master the material", "To ignore details", "To delete notes", "To avoid exams"));
-            qMap.put("answer", "To master the material");
-            questionsList.add(qMap);
-        }
-        
-        // Limit to requested count
-        if (questionsList.size() > count) {
-            questionsList = questionsList.subList(0, count);
-        }
-        
-        // Serialize to JSON array manually to avoid jackson dependency import issues
-        StringBuilder json = new StringBuilder("[");
-        for (int i = 0; i < questionsList.size(); i++) {
-            Map<String, Object> q = questionsList.get(i);
-            json.append("\n  {");
-            json.append("\n    \"question\": \"").append(escapeJson(q.get("question").toString())).append("\",");
-            json.append("\n    \"options\": [");
-            List<String> opts = (List<String>) q.get("options");
-            for (int j = 0; j < opts.size(); j++) {
-                json.append("\"").append(escapeJson(opts.get(j))).append("\"");
-                if (j < opts.size() - 1) json.append(", ");
-            }
-            json.append("],");
-            json.append("\n    \"answer\": \"").append(escapeJson(q.get("answer").toString())).append("\"");
-            json.append("\n  }");
-            if (i < questionsList.size() - 1) json.append(",");
-        }
-        json.append("\n]");
-        return json.toString();
-    }
-    
-    private static String escapeJson(String s) {
-        if (s == null) return "";
-        return s.replace("\"", "\\\"");
     }
 }
